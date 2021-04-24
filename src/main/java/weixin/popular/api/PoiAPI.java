@@ -12,7 +12,7 @@ import weixin.popular.bean.poi.Poi;
 import weixin.popular.bean.poi.PoiListResult;
 import weixin.popular.bean.poi.PoiResult;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 
 /**
  * 微信门店
@@ -47,7 +47,7 @@ public class PoiAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static BaseResult addPoi(String accessToken, Poi poi) {
-		return addPoi(accessToken, JsonUtil.toJSONString(poi));
+		return addPoi(accessToken, WxJsonUtil.toJSONString(poi));
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class PoiAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static BaseResult updatePoi(String accessToken, Poi poi) {
-		return updatePoi(accessToken, JsonUtil.toJSONString(poi));
+		return updatePoi(accessToken, WxJsonUtil.toJSONString(poi));
 	}
 
 	/**

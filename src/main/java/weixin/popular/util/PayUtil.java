@@ -30,25 +30,47 @@ public abstract class PayUtil {
 	/**
 	 * (MCH)生成支付JS请求对象
 	 * 
-	 * @param prepay_id
-	 *            预支付订单号
+	 * @param prepay_id 预支付订单号
 	 * @param appId
-	 *            appId
-	 * @param key
-	 *            商户支付密钥
+	 * @param key 商户支付密钥
 	 * @return json
 	 */
 	public static String generateMchPayJsRequestJson(String prepay_id, String appId, String key) {
 		String package_ = "prepay_id=" + prepay_id;
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("appId", appId);
-		map.put("nonceStr", UUID.randomUUID().toString().replace("-", ""));
+		//map.put("nonceStr", UUID.randomUUID().toString().replace("-", ""));
+		map.put("nonceStr", WxRandomUtils.getRandomStr());
 		map.put("package", package_);
 		map.put("signType", "MD5");
 		map.put("timeStamp", System.currentTimeMillis() / 1000 + "");
 		String paySign = SignatureUtil.generateSign(map, key);
 		map.put("paySign", paySign);
-		return JsonUtil.toJSONString(map);
+		map.put("packageStr", package_);//add by cailin
+		return WxJsonUtil.toJSONString(map);
+	}
+	
+	/**
+	 * (MCH)生成支付JS请求对象
+	 * 
+	 * @param prepay_id 预支付订单号
+	 * @param appId
+	 * @param key 商户支付密钥
+	 * @return Map<String, String>
+	 */
+	public static Map<String, String> generateMchPayJsRequest(String prepay_id, String appId, String key) {
+		String package_ = "prepay_id=" + prepay_id;
+		Map<String, String> map = new LinkedHashMap<String, String>();
+		map.put("appId", appId);
+		//map.put("nonceStr", UUID.randomUUID().toString().replace("-", ""));
+		map.put("nonceStr", WxRandomUtils.getRandomStr());
+		map.put("package", package_);
+		map.put("signType", "MD5");
+		map.put("timeStamp", System.currentTimeMillis() / 1000 + "");
+		String paySign = SignatureUtil.generateSign(map, key);
+		map.put("paySign", paySign);
+		map.put("packageStr", package_);//add by cailin
+		return map;
 	}
 
 	/**

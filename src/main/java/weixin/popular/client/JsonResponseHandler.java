@@ -10,7 +10,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 
 public class JsonResponseHandler{
 
@@ -36,8 +36,10 @@ public class JsonResponseHandler{
             if (status >= 200 && status < 300) {
                 HttpEntity entity = response.getEntity();
                 String str = EntityUtils.toString(entity,"utf-8");
-                logger.info("URI[{}] elapsed time:{} ms RESPONSE DATA:{}",super.uriId,System.currentTimeMillis()-super.startTime,str);
-                return JsonUtil.parseObject(str, clazz);
+                if (logger.isDebugEnabled()) {
+                	logger.debug("URI[{}] elapsed time:{} ms RESPONSE DATA:{}",super.uriId,System.currentTimeMillis()-super.startTime,str);
+                }
+                return WxJsonUtil.parseObject(str, clazz);
             } else {
                 throw new ClientProtocolException("Unexpected response status: " + status);
             }

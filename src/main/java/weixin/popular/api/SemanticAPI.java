@@ -21,7 +21,7 @@ import weixin.popular.bean.semantic.semproxy.SemproxySearch;
 import weixin.popular.bean.semantic.semproxy.SemproxySearchResult;
 import weixin.popular.bean.semantic.translatecontent.TranslatecontentResult;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 import weixin.popular.util.StreamUtils;
 
 import java.io.*;
@@ -48,7 +48,7 @@ public class SemanticAPI extends BaseAPI {
      * @since 2.8.22
      */
     public static SemproxySearchResult semproxySearch(String accessToken, SemproxySearch semproxySearch) {
-        return semproxySearch(accessToken, JsonUtil.toJSONString(semproxySearch));
+        return semproxySearch(accessToken, WxJsonUtil.toJSONString(semproxySearch));
     }
 
     /**

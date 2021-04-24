@@ -70,26 +70,6 @@ public abstract class JsUtil {
 	}; 
 
 	/**
-	 * 生成 config接口 signature
-	 * @param noncestr noncestr
-	 * @param jsapi_ticket jsapi_ticket
-	 * @param timestamp timestamp
-	 * @param url url
-	 * @return sign
-	 */
-	public static String generateConfigSignature(String noncestr,String jsapi_ticket,String timestamp,String url){
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("noncestr", noncestr);
-		map.put("jsapi_ticket", jsapi_ticket);
-		map.put("timestamp", timestamp);
-		map.put("url", url);
-		
-		Map<String, String> tmap = MapUtil.order(map);
-		String str = MapUtil.mapJoin(tmap,true,false);
-		return DigestUtils.shaHex(str);
-	}
-
-	/**
 	 * 生成 config接口注入权限验证 JSON
 	 * @param jsapi_ticket jsapi_ticket
 	 * @param debug debug
@@ -155,18 +135,119 @@ public abstract class JsUtil {
 	 *
 	 * @return 配置JSON数据
 	 */
-	public static String generateConfigJson(String jsapi_ticket,boolean debug,String appId,String url,String... jsApiList){
-		long timestamp = System.currentTimeMillis()/1000;
-		String nonceStr = UUID.randomUUID().toString();
-		String signature = generateConfigSignature(nonceStr, jsapi_ticket, timestamp + "", url);
+	public static String generateConfigJson(String jsapiTicket, boolean debug, String appId, String url, String[] jsApiList){
+		Long timestamp = System.currentTimeMillis() / 1000;
+		String nonceStr = WxRandomUtils.getRandomStr();
+		String signature = generateSignature(jsapiTicket, nonceStr, timestamp.toString(), url);
+		StringBuilder builder = new StringBuilder();
+		builder.append("{")
+		.append("\"debug\":").append(debug).append(",\"appId\":\"").append(appId).append("\",\"timestamp\":").append(timestamp.toString())
+		.append(",\"nonceStr\":\"").append(nonceStr).append("\",\"signature\":\"").append(signature).append("\"");
+		if (jsApiList != null) {
+			builder.append(",\"jsApiList\":[");
+			for (int i = 0; i < jsApiList.length; i++) {
+				if (i == 0) {
+					builder.append("\"").append(jsApiList[i]).append("\"");
+				} else {
+					builder.append(",\"").append(jsApiList[i]).append("\"");
+				}
+			}
+			builder.append("]");
+		}
+		builder.append("}");
+		return builder.toString();
+	}
+	
+	/**
+	 * cailin：
+	 * 生成JavaScript String
+	 * 
+	 * @param jsapiTicket
+	 * @param debug
+	 * @param appId
+	 * @param url
+	 * @param jsApiList
+	 * @return
+	 */
+	public static String generateConfigStr(String jsapiTicket, boolean debug, String appId, String url, String[] jsApiList){
+		Long timestamp = System.currentTimeMillis() / 1000;
+		String nonceStr = WxRandomUtils.getRandomStr();
+		String signature = generateSignature(jsapiTicket, nonceStr, timestamp.toString(), url);
+		StringBuilder builder = new StringBuilder();
+		builder.append("{")
+		.append("debug:").append(debug).append(",appId:'").append(appId).append("',timestamp:").append(timestamp.toString())
+		.append(",nonceStr:'").append(nonceStr).append("',signature:'").append(signature).append("'");
+		if (jsApiList != null) {
+			builder.append(",jsApiList:[");
+			for (int i = 0; i < jsApiList.length; i++) {
+				if (i == 0) {
+					builder.append("'").append(jsApiList[i]).append("'");
+				} else {
+					builder.append(",'").append(jsApiList[i]).append("'");
+				}
+			}
+			builder.append("]");
+		}
+		builder.append("}");
+		return builder.toString();
+	}
+	
+	/**
+	 * cailin
+	 * @param jsapiTicket
+	 * @param debug
+	 * @param appId
+	 * @param url
+	 * @param jsApiList
+	 * @return
+	 */
+	public static Map<String, Object> generateConfig(String jsapiTicket, boolean debug, String appId, String url, String[] jsApiList) {
+		Long timestamp = System.currentTimeMillis() / 1000;
+		//String nonceStr = UUID.randomUUID().toString();
+		String nonceStr = WxRandomUtils.getRandomStr();
+		//String signature = SHA1.genWithAmple("jsapi_ticket=" + jsapiTicket, "noncestr=" + noncestr, "timestamp=" + timestamp, "url=" + url);
+		//Cailin 优化
+		String signature = generateSignature(jsapiTicket, nonceStr, timestamp.toString(), url);
+		//
 		Map<String,Object> map = new LinkedHashMap<>();
 		map.put("debug", debug);
 		map.put("appId", appId);
 		map.put("timestamp", timestamp);
 		map.put("nonceStr", nonceStr);
+		//map.put("url", url);
 		map.put("signature", signature);
-		map.put("jsApiList", jsApiList == null ? ALL_JS_API_LIST : jsApiList);
-		return JsonUtil.toJSONString(map);
+		if(jsApiList != null) {
+			map.put("jsApiList", jsApiList);
+		}
+		return map;
+	}
+	
+	/**
+	 * 生成 config接口 signature
+	 * @param jsapi_ticket
+	 * @param noncestr
+	 * @param timestamp
+	 * @param url
+	 * @return
+	 */
+	public static String generateSignature(String jsapi_ticket, String noncestr, String timestamp, String url){
+		/*
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("noncestr", noncestr);
+		map.put("jsapi_ticket", jsapi_ticket);
+		map.put("timestamp", timestamp);
+		map.put("url", url);
+		//排序
+		Map<String, String> tmap = MapUtil.order(map);
+		//order result eg: {jsapi_ticket=jsapi_ticket222, noncestr=noncestr222, timestamp=timestamp222, url=url222}
+		String str = MapUtil.mapJoin(tmap,true,false);
+		//result eg: jsapi_ticket=jsapi_ticket222&noncestr=noncestr222&timestamp=timestamp222&url=url222
+		return DigestUtils.shaHex(str);
+		*/
+		//Cailin 优化
+		StringBuilder str = new StringBuilder().append("jsapi_ticket=").append(jsapi_ticket)
+				.append("&noncestr=").append(noncestr).append("&timestamp=").append(timestamp).append("&url=").append(url);
+		return DigestUtils.shaHex(str.toString());
 	}
 
 	/**

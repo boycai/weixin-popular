@@ -56,7 +56,7 @@ import weixin.popular.bean.card.update.UpdateResult;
 import weixin.popular.bean.card.user.getcardlist.UserGetCardList;
 import weixin.popular.bean.card.user.getcardlist.UserGetCardListResult;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 
 /**
  * 微信卡券
@@ -73,7 +73,7 @@ public class CardAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static BatchGetResult batchGet(String accessToken, BatchGet batchget) {
-		return batchGet(accessToken, JsonUtil.toJSONString(batchget));
+		return batchGet(accessToken, WxJsonUtil.toJSONString(batchget));
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class CardAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static CodeCheckCodeResult codeCheckCode(String accessToken, CodeCheckCode codeCheck) {
-		return codeCheckCode(accessToken, JsonUtil.toJSONString(codeCheck));
+		return codeCheckCode(accessToken, WxJsonUtil.toJSONString(codeCheck));
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class CardAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static CodeConsumeResult codeConsume(String accessToken, CodeConsume codeConsume) {
-		return codeConsume(accessToken, JsonUtil.toJSONString(codeConsume));
+		return codeConsume(accessToken, WxJsonUtil.toJSONString(codeConsume));
 	}
 
 	/**
@@ -161,7 +161,7 @@ public class CardAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static CodeDecryptResult codeDecrypt(String accessToken, CodeDecrypt codeDecrypt) {
-		return codeDecrypt(accessToken, JsonUtil.toJSONString(codeDecrypt));
+		return codeDecrypt(accessToken, WxJsonUtil.toJSONString(codeDecrypt));
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class CardAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static CodeDepositResult codeDeposit(String accessToken, CodeDeposit codeDeposit) {
-		return codeDeposit(accessToken, JsonUtil.toJSONString(codeDeposit));
+		return codeDeposit(accessToken, WxJsonUtil.toJSONString(codeDeposit));
 	}
 
 	/**
@@ -221,7 +221,7 @@ public class CardAPI extends BaseAPI {
 	 * @return result  
 	 */
 	public static CodeGetResult codeGet(String accessToken, CodeGet codeGet) {
-		return codeGet(accessToken, JsonUtil.toJSONString(codeGet));
+		return codeGet(accessToken, WxJsonUtil.toJSONString(codeGet));
 	}
 
 	/**
@@ -250,7 +250,7 @@ public class CardAPI extends BaseAPI {
 	 */
 	public static CodeGetDepositCountResult codeGetDepositCount(String accessToken, CodeGetDepositCount codeCount) {
 		return codeGetDepositCount(accessToken,
-				JsonUtil.toJSONString(codeCount));
+				WxJsonUtil.toJSONString(codeCount));
 	}
 
 	/**
@@ -279,7 +279,7 @@ public class CardAPI extends BaseAPI {
 	 */
 	public static BaseResult codeUnavailable(String accessToken, CodeUnavailable codeUnavailable) {
 		return codeUnavailable(accessToken,
-				JsonUtil.toJSONString(codeUnavailable));
+				WxJsonUtil.toJSONString(codeUnavailable));
 	}
 
 	/**
@@ -317,7 +317,7 @@ public class CardAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static BaseResult codeUpdate(String accessToken, CodeUpdate codeUpdate) {
-		return codeUpdate(accessToken, JsonUtil.toJSONString(codeUpdate));
+		return codeUpdate(accessToken, WxJsonUtil.toJSONString(codeUpdate));
 	}
 
 	/**
@@ -345,7 +345,7 @@ public class CardAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static CreateResult create(String accessToken, Create<?> card) {
-		return create(accessToken, JsonUtil.toJSONString(card));
+		return create(accessToken, WxJsonUtil.toJSONString(card));
 	}
 
 	/**
@@ -517,7 +517,7 @@ public class CardAPI extends BaseAPI {
 	 */
 	public static LandingPageCreateResult landingPageCreate(String accessToken, LandingPageCreate landingPage) {
 		return landingPageCreate(accessToken,
-				JsonUtil.toJSONString(landingPage));
+				WxJsonUtil.toJSONString(landingPage));
 	}
 
 	/**
@@ -545,7 +545,7 @@ public class CardAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static BaseResult modifyStock(String accessToken, ModifyStock modifystock) {
-		return modifyStock(accessToken, JsonUtil.toJSONString(modifystock));
+		return modifyStock(accessToken, WxJsonUtil.toJSONString(modifystock));
 	}
 
 	/**
@@ -573,7 +573,7 @@ public class CardAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static MpNewsGetHtmlResult mpNewsGetHtml(String accessToken, MpNewsGetHtml mpnews) {
-		return mpNewsGetHtml(accessToken, JsonUtil.toJSONString(mpnews));
+		return mpNewsGetHtml(accessToken, WxJsonUtil.toJSONString(mpnews));
 	}
 
 	/**
@@ -602,7 +602,7 @@ public class CardAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static BaseResult payCellSet(String accessToken, PaySellSet cardSet) {
-		return payCellSet(accessToken, JsonUtil.toJSONString(cardSet));
+		return payCellSet(accessToken, WxJsonUtil.toJSONString(cardSet));
 	}
 
 	/**
@@ -631,7 +631,7 @@ public class CardAPI extends BaseAPI {
 	 */
 	public static QrCodeCreateResult qrcodeCreate(String accessToken,
 			QrCodeCreate action) {
-		return qrcodeCreate(accessToken, JsonUtil.toJSONString(action));
+		return qrcodeCreate(accessToken, WxJsonUtil.toJSONString(action));
 	}
 
 	/**
@@ -642,7 +642,7 @@ public class CardAPI extends BaseAPI {
 	 */
 	public static QrCodeCreateResult qrcodeCreate(String accessToken,
 			QrCodeCreateMultiple action) {
-		return qrcodeCreate(accessToken, JsonUtil.toJSONString(action));
+		return qrcodeCreate(accessToken, WxJsonUtil.toJSONString(action));
 	}
 
 	/**
@@ -672,7 +672,7 @@ public class CardAPI extends BaseAPI {
 	 */
 	public static BaseResult selfconsumecellSet(String accessToken,
 			PaySellSet cardSet) {
-		return selfconsumecellSet(accessToken, JsonUtil.toJSONString(cardSet));
+		return selfconsumecellSet(accessToken, WxJsonUtil.toJSONString(cardSet));
 	}
 
 	/**
@@ -721,7 +721,7 @@ public class CardAPI extends BaseAPI {
 	 */
 	public static BaseResult testWhiteListSet(String accessToken,
 			TestWhiteListSet whiteList) {
-		return testWhiteListSet(accessToken, JsonUtil.toJSONString(whiteList));
+		return testWhiteListSet(accessToken, WxJsonUtil.toJSONString(whiteList));
 	}
 
 	/**
@@ -749,7 +749,7 @@ public class CardAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static UpdateResult update(String accessToken, UpdateCash updateCash) {
-		return update(accessToken, JsonUtil.toJSONString(updateCash));
+		return update(accessToken, WxJsonUtil.toJSONString(updateCash));
 	}
 
 	/**
@@ -760,7 +760,7 @@ public class CardAPI extends BaseAPI {
 	 */
 	public static UpdateResult update(String accessToken,
 			UpdateDiscount updateDiscount) {
-		return update(accessToken, JsonUtil.toJSONString(updateDiscount));
+		return update(accessToken, WxJsonUtil.toJSONString(updateDiscount));
 	}
 
 	/**
@@ -771,7 +771,7 @@ public class CardAPI extends BaseAPI {
 	 */
 	public static UpdateResult update(String accessToken,
 			UpdateGeneralCoupon updateGeneralCoupon) {
-		return update(accessToken, JsonUtil.toJSONString(updateGeneralCoupon));
+		return update(accessToken, WxJsonUtil.toJSONString(updateGeneralCoupon));
 	}
 
 	/**
@@ -781,7 +781,7 @@ public class CardAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static UpdateResult update(String accessToken, UpdateGift updateGift) {
-		return update(accessToken, JsonUtil.toJSONString(updateGift));
+		return update(accessToken, WxJsonUtil.toJSONString(updateGift));
 	}
 
 	/**
@@ -792,7 +792,7 @@ public class CardAPI extends BaseAPI {
 	 */
 	public static UpdateResult update(String accessToken,
 			UpdateGroupon updateGroupon) {
-		return update(accessToken, JsonUtil.toJSONString(updateGroupon));
+		return update(accessToken, WxJsonUtil.toJSONString(updateGroupon));
 	}
 
 	/**
@@ -823,7 +823,7 @@ public class CardAPI extends BaseAPI {
 	public static UserGetCardListResult userGetCardList(String accessToken,
 			UserGetCardList userGetCardList) {
 		return userGetCardList(accessToken,
-				JsonUtil.toJSONString(userGetCardList));
+				WxJsonUtil.toJSONString(userGetCardList));
 	}
 
 }

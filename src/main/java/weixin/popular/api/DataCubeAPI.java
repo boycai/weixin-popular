@@ -27,7 +27,7 @@ import weixin.popular.bean.datacube.wxapp.VisitdistributionResult;
 import weixin.popular.bean.datacube.wxapp.VisitpageResult;
 import weixin.popular.bean.datacube.wxapp.VisittrendResult;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 
 /**
  * 数据统计
@@ -45,7 +45,7 @@ public class DataCubeAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static BizuinInfoResult getCardBizuinInfo(String access_token, BizuinInfo bizuinCube) {
-		return getCardBizuinInfo(access_token, JsonUtil.toJSONString(bizuinCube));
+		return getCardBizuinInfo(access_token, WxJsonUtil.toJSONString(bizuinCube));
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class DataCubeAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static CardInfoResult getCardCardInfo(String access_token, CardInfo freeCardCube) {
-		return getCardCardInfo(access_token, JsonUtil.toJSONString(freeCardCube));
+		return getCardCardInfo(access_token, WxJsonUtil.toJSONString(freeCardCube));
 	}
 	
 	/**
@@ -112,7 +112,7 @@ public class DataCubeAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static MemberCardInfoResult getCardMemberCardInfo(String access_token, MemberCardInfo memberCardCube) {
-		return getCardMemberCardInfo(access_token, JsonUtil.toJSONString(memberCardCube));
+		return getCardMemberCardInfo(access_token, WxJsonUtil.toJSONString(memberCardCube));
 	}
 	
 	/**

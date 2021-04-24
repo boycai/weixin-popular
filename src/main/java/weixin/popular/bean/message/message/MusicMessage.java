@@ -30,12 +30,9 @@ public class MusicMessage extends Message {
         private String thumb_media_id;
 
         public Music(){
-
         }
 
-        public Music(String title, String description, String musicurl,
-                     String hqmusicurl, String thumb_media_id) {
-            super();
+        public Music(String title, String description, String musicurl, String hqmusicurl, String thumb_media_id) {
             this.title = title;
             this.description = description;
             this.musicurl = musicurl;

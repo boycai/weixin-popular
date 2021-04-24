@@ -1,159 +1,150 @@
 package weixin.popular.support;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import weixin.popular.api.TokenAPI;
-import weixin.popular.bean.token.Token;
+import redis.clients.jedis.Jedis;
+import redis.clients.util.Pool;
+import weixin.popular.error.WxErrorException;
+import weixin.popular.support.handler.DefaultWeixinHandler;
+import weixin.popular.support.handler.WeixinHandler;
+
+import com.boycai.base.Utils;
+import com.boycai.plugin.spring.util.SpringUtils;
 
 /**
  * TokenManager token 自动刷新
+ * 
  * @author LiYi
  *
  */
-public class TokenManager{
+public class TokenManager {
+    private static final Logger logger = LoggerFactory.getLogger(TokenManager.class);
+    private static WeixinHandler weixinHandler;
 
-	private static final Logger logger = LoggerFactory.getLogger(TokenManager.class);
-	
-	private static ScheduledExecutorService scheduledExecutorService;
+    static {
+        WeixinHandler handler = SpringUtils.getBeanOrNull(WeixinHandler.class);
+        if (handler == null) {
+            handler = new DefaultWeixinHandler();
+        }
+        setWeixinHandler(handler);
+    }
 
-	private static Map<String,String> tokenMap = new ConcurrentHashMap<String,String>();
+    /**
+     * 已废弃。请调用：{@link #addSecret(String, String)} <br>
+     * 
+     * @param jedisPool
+     * @param appId
+     * @param secret
+     */
+    @Deprecated
+    public static void init(Pool<Jedis> jedisPool, final String appId, final String secret) {
+        setJedisPool(jedisPool);
+        //
+        addSecret(appId, secret);
+        // ticket
+        // TicketManager.init(Pool<Jedis>, appId);
+        logger.debug("appId: " + appId);
+    }
 
-	private static Map<String,ScheduledFuture<?>> futureMap = new ConcurrentHashMap<String, ScheduledFuture<?>>();
+    public static void setJedisPool(Pool<Jedis> jedisPool) {
+        weixinHandler.setJedisPool(jedisPool);
+    }
 
-	private static int poolSize = 2;
-	
-	private static boolean daemon = Boolean.TRUE;
-	
-	private static String firestAppid;
+    public static void addSecret(String appId, String secret) {
+        if (Utils.isEmpty(appId) || Utils.isEmpty(secret)) {
+            return;
+        }
+        weixinHandler.addSecret(appId, secret);
+    }
 
-	/**
-	 * 初始化 scheduledExecutorService
-	 */
-	private static void initScheduledExecutorService(){
-		logger.info("daemon:{},poolSize:{}",daemon,poolSize);
-		scheduledExecutorService =  Executors.newScheduledThreadPool(poolSize,new ThreadFactory() {
+    public static String getSecret(String appId) {
+        return weixinHandler.getSecret(appId);
+    }
 
-			@Override
-			public Thread newThread(Runnable arg0) {
-				Thread thread = Executors.defaultThreadFactory().newThread(arg0);
-				//设置守护线程
-				thread.setDaemon(daemon);
-				return thread;
-			}
-		});
-	}
+    // private static String prefixKey(String appId) {
+    // return KEY_PREFIX + appId;
+    // }
 
-	/**
-	 * 设置线程池
-	 * @param poolSize poolSize
-	 */
-	public static void setPoolSize(int poolSize){
-		TokenManager.poolSize = poolSize;
-	}
-	
-	/**
-	 * 设置线程方式
-	 * @param daemon daemon
-	 */
-	public static void setDaemon(boolean daemon) {
-		TokenManager.daemon = daemon;
-	}
-	
-	/**
-	 * 初始化token 刷新，每118分钟刷新一次。
-	 * @param appid appid
-	 * @param secret secret
-	 */
-	public static void init(final String appid,final String secret){
-		init(appid, secret, 0, 60*118);
-	}
+    public static synchronized void updateAccessToken(String appId, String accessToken, int expiresInSeconds) {
+        weixinHandler.updateAccessToken(appId, accessToken, expiresInSeconds);
+    }
 
-	/**
-	 * 初始化token 刷新，每118分钟刷新一次。
-	 * @param appid appid
-	 * @param secret secret
-	 * @param initialDelay 首次执行延迟（秒）
-	 * @param delay 执行间隔（秒）
-	 */
-	public static void init(final String appid,final String secret,int initialDelay,int delay){
-		if(scheduledExecutorService == null){
-			initScheduledExecutorService();
-		}
-		if(firestAppid == null){
-			firestAppid = appid;
-		}
-		if(futureMap.containsKey(appid)){
-			futureMap.get(appid).cancel(true);
-		}
-		//立即执行一次
-		if(initialDelay == 0){
-			doRun(appid, secret);
-		}
-		ScheduledFuture<?> scheduledFuture =  scheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
-			@Override
-			public void run() {
-				doRun(appid, secret);
-			}
-		},initialDelay == 0 ? delay : initialDelay,delay,TimeUnit.SECONDS);
-		futureMap.put(appid, scheduledFuture);
-		logger.info("appid:{}",appid);
-	}
-	
-	private static void doRun(final String appid, final String secret) {
-		try {
-			Token token = TokenAPI.token(appid,secret);
-			tokenMap.put(appid,token.getAccess_token());
-			logger.info("ACCESS_TOKEN refurbish with appid:{}",appid);
-		} catch (Exception e) {
-			logger.error("ACCESS_TOKEN refurbish error with appid:{}",appid);
-			logger.error("", e);
-		}
-	}
+    public static void expireToken(String appId) {
+        weixinHandler.expireToken(appId);
+    }
 
-	/**
-	 * 取消 token 刷新
-	 */
-	public static void destroyed(){
-		scheduledExecutorService.shutdownNow();
-		logger.info("destroyed");
-	}
-	
-	/**
-	 * 取消刷新
-	 * @param appid appid
-	 */
-	public static void destroyed(String appid){
-		if(futureMap.containsKey(appid)){
-			futureMap.get(appid).cancel(true);
-			logger.info("destroyed appid:{}",appid);
-		}
-	}
+    public static boolean isTokenExpired(String appId) {
+        // return jedis.ttl(KEY_PREFIX + appId) < 2;// 2s内过期
+        return weixinHandler.isTokenExpired(appId);
+    }
 
-	/**
-	 * 获取 access_token
-	 * @param appid appid
-	 * @return token
-	 */
-	public static String getToken(String appid){
-		return tokenMap.get(appid);
-	}
+    public static String getTokenInCache(String appId) {
+        return weixinHandler.getTokenInCache(appId);
+    }
 
-	/**
-	 * 获取第一个appid 的 access_token
-	 * 适用于单一微信号
-	 * @return token
-	 */
-	public static String getDefaultToken(){
-		return tokenMap.get(firestAppid);
-	}
+    /**
+     * 获取 access_token
+     * 
+     * @param appId
+     *            appId
+     * @return token
+     * @throws WxErrorException
+     */
+    public static String getToken(String appId) throws WxErrorException {
+        return weixinHandler.getToken(appId);
+    }
+
+    public static String getTokenOrNull(String appId) {
+        try {
+            return weixinHandler.getToken(appId);
+        } catch (WxErrorException e) {
+        }
+        return null;
+    }
+
+    /**
+     * 强制刷新 （15s内只会刷新一次）
+     * 
+     * @param appId
+     * @return
+     * @throws WxErrorException
+     */
+    public static String getTokenForceRefresh(String appId) throws WxErrorException {
+        return weixinHandler.getTokenForceRefresh(appId);
+    }
+
+    /**
+     * 发生以下情况时说明access_token无效 (需要刷新token了)<br>
+     * 40001 获取access_token时AppSecret错误，或者access_token无效<br>
+     * 42001 access_token超时<br>
+     * 40014 不合法的access_token，请开发者认真比对access_token的有效性（如是否过期），或查看是否正在为恰当的公众号调用接口<br>
+     * 
+     * @param appId
+     * @param errcode
+     * @return
+     */
+    public static boolean isTokenInvalid(String errcode) {
+        return errcode != null && ("40001".equals(errcode) || "42001".equals(errcode) || "40014".equals(errcode));
+    }
+
+    // public static boolean isTokenExpired(String errcode) {
+    // return errcode != null && "42001".equals(errcode) ||
+    // "40014".equals(errcode);
+    // }
+
+    public static String refreshInvalidToken(String appId, String accessToken, String errcode) throws WxErrorException {
+        if (isTokenInvalid(errcode)) {
+            accessToken = getTokenForceRefresh(appId);
+        }
+        return accessToken;
+    }
+
+    public static void setWeixinHandler(WeixinHandler handler) {
+        if (handler != null) {
+            weixinHandler = handler;
+            TicketManager.setWeixinHandler(handler);
+        }
+    }
 
 }

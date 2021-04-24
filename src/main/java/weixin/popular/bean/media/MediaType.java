@@ -1,6 +1,6 @@
 package weixin.popular.bean.media;
 
-public enum MediaType{
+public enum MediaType {
 	image {
 
 		@Override
@@ -64,6 +64,30 @@ public enum MediaType{
 	 */
 	public abstract String uploadType();
 
-
-
+	
+	/**
+	 * 解析MediaType
+	 * 
+	 * @param type  eg: image,voice_mp3,...
+	 * @return
+	 */
+	public static MediaType parse(String type) {
+		if (type != null) {
+			MediaType[] mediaTypes = values();
+			for (MediaType mediaType : mediaTypes) {
+				if (type.equals(mediaType.name())) {
+					return mediaType;
+				}
+			}
+		}
+		return null;
+	}
+	
+//	public static void main(String[] args) {
+//		MediaType mediaType = MediaType.parse("image");
+//		System.out.println(mediaType);
+//		mediaType = MediaType.parse("voice_mp3");
+//		System.out.println(mediaType);
+//	}
+	
 }

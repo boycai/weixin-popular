@@ -1,11 +1,20 @@
 package weixin.popular.api;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.PublicKey;
+import java.security.Security;
 import java.util.Map;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
+import javax.crypto.Cipher;
+
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -15,10 +24,16 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import weixin.popular.bean.paymch.*;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 import weixin.popular.util.MapUtil;
 import weixin.popular.util.SignatureUtil;
 import weixin.popular.util.StreamUtils;
@@ -32,7 +47,7 @@ import weixin.popular.util.XMLConverUtil;
 public class PayMchAPI extends BaseAPI{
 	
 	private static ThreadLocal<Boolean> sandboxnew = new ThreadLocal<Boolean>();
-	
+	private static final Logger logger = LoggerFactory.getLogger(PayMchAPI.class);
 	/**
 	 * 仿真测试 开始
 	 * @since 2.8.6
@@ -94,11 +109,11 @@ public class PayMchAPI extends BaseAPI{
 		Map<String,String> map = MapUtil.objectToMap(unifiedorder, "detail", "scene_info");
 		//@since 2.8.8 detail 字段签名处理
 		if(unifiedorder.getDetail() != null){
-			map.put("detail",JsonUtil.toJSONString(unifiedorder.getDetail()));
+			map.put("detail",WxJsonUtil.toJSONString(unifiedorder.getDetail()));
 		}
 		//@since 2.8.21 scene_info 字段签名处理
 		if(unifiedorder.getScene_info() != null){
-			map.put("scene_info",JsonUtil.toJSONString(unifiedorder.getScene_info()));
+			map.put("scene_info",WxJsonUtil.toJSONString(unifiedorder.getScene_info()));
 		}
 		if(key != null){
 			String sign = SignatureUtil.generateSign(map,unifiedorder.getSign_type(),key);
@@ -123,11 +138,11 @@ public class PayMchAPI extends BaseAPI{
 		Map<String,String> map = MapUtil.objectToMap(micropay);
 		//@since 2.8.14 detail 字段签名处理
 		if(micropay.getDetail() != null){
-			map.put("detail",JsonUtil.toJSONString(micropay.getDetail()));
+			map.put("detail",WxJsonUtil.toJSONString(micropay.getDetail()));
 		}
 		//@since 2.8.27 scene_info 字段签名处理
 		if(micropay.getScene_info() != null){
-			map.put("scene_info",JsonUtil.toJSONString(micropay.getScene_info()));
+			map.put("scene_info",WxJsonUtil.toJSONString(micropay.getScene_info()));
 		}
 		String sign = SignatureUtil.generateSign(map,micropay.getSign_type(),key);
 		micropay.setSign(sign);
@@ -192,10 +207,10 @@ public class PayMchAPI extends BaseAPI{
 	 * @return SecapiPayRefundResult
 	 */
 	public static SecapiPayRefundResult secapiPayRefund(SecapiPayRefund secapiPayRefund,String key){
-		Map<String,String> map = MapUtil.objectToMap( secapiPayRefund);
+		Map<String,String> map = MapUtil.objectToMap(secapiPayRefund);
 		String sign = SignatureUtil.generateSign(map,secapiPayRefund.getSign_type(),key);
 		secapiPayRefund.setSign(sign);
-		String secapiPayRefundXML = XMLConverUtil.convertToXML( secapiPayRefund);
+		String secapiPayRefundXML = XMLConverUtil.convertToXML(secapiPayRefund);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(xmlHeader)
 				.setUri(baseURI()+ "/secapi/pay/refund")
@@ -213,10 +228,10 @@ public class PayMchAPI extends BaseAPI{
 	 * @return MchReverseResult
 	 */
 	public static MchReverseResult secapiPayReverse(MchReverse mchReverse,String key){
-		Map<String,String> map = MapUtil.objectToMap( mchReverse);
+		Map<String,String> map = MapUtil.objectToMap(mchReverse);
 		String sign = SignatureUtil.generateSign(map,mchReverse.getSign_type(),key);
 		mchReverse.setSign(sign);
-		String secapiPayRefundXML = XMLConverUtil.convertToXML( mchReverse);
+		String secapiPayRefundXML = XMLConverUtil.convertToXML(mchReverse);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(xmlHeader)
 				.setUri(baseURI()+ "/secapi/pay/reverse")
@@ -434,10 +449,10 @@ public class PayMchAPI extends BaseAPI{
 	 * @return SendCouponResult
 	 */
 	public static SendCouponResult mmpaymkttransfersSend_coupon(SendCoupon sendCoupon,String key){
-		Map<String,String> map = MapUtil.objectToMap( sendCoupon);
+		Map<String,String> map = MapUtil.objectToMap(sendCoupon);
 		String sign = SignatureUtil.generateSign(map,sendCoupon.getSign_type(),key);
 		sendCoupon.setSign(sign);
-		String secapiPayRefundXML = XMLConverUtil.convertToXML( sendCoupon);
+		String secapiPayRefundXML = XMLConverUtil.convertToXML(sendCoupon);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(xmlHeader)
 				.setUri(baseURI()+ "/mmpaymkttransfers/send_coupon")
@@ -453,10 +468,10 @@ public class PayMchAPI extends BaseAPI{
 	 * @return QueryCouponStockResult
 	 */
 	public static QueryCouponStockResult mmpaymkttransfersQuery_coupon_stock(QueryCouponStock queryCouponStock,String key){
-		Map<String,String> map = MapUtil.objectToMap( queryCouponStock);
+		Map<String,String> map = MapUtil.objectToMap(queryCouponStock);
 		String sign = SignatureUtil.generateSign(map,queryCouponStock.getSign_type(),key);
 		queryCouponStock.setSign(sign);
-		String secapiPayRefundXML = XMLConverUtil.convertToXML( queryCouponStock);
+		String secapiPayRefundXML = XMLConverUtil.convertToXML(queryCouponStock);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(xmlHeader)
 				.setUri(baseURI()+ "/mmpaymkttransfers/query_coupon_stock")
@@ -472,10 +487,10 @@ public class PayMchAPI extends BaseAPI{
 	 * @return QueryCouponResult
 	 */
 	public static QueryCouponResult promotionQuery_coupon(QueryCoupon queryCoupon,String key){
-		Map<String,String> map = MapUtil.objectToMap( queryCoupon);
+		Map<String,String> map = MapUtil.objectToMap(queryCoupon);
 		String sign = SignatureUtil.generateSign(map,queryCoupon.getSign_type(),key);
 		queryCoupon.setSign(sign);
-		String secapiPayRefundXML = XMLConverUtil.convertToXML( queryCoupon);
+		String secapiPayRefundXML = XMLConverUtil.convertToXML(queryCoupon);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(xmlHeader)
 				.setUri(baseURI()+ "/mmpaymkttransfers/querycouponsinfo")
@@ -504,10 +519,10 @@ public class PayMchAPI extends BaseAPI{
 	 * @return SendredpackResult
 	 */
 	public static SendredpackResult mmpaymkttransfersSendredpack(Sendredpack sendredpack,String key){
-		Map<String,String> map = MapUtil.objectToMap( sendredpack);
+		Map<String,String> map = MapUtil.objectToMap(sendredpack);
 		String sign = SignatureUtil.generateSign(map,sendredpack.getSign_type(),key);
 		sendredpack.setSign(sign);
-		String secapiPayRefundXML = XMLConverUtil.convertToXML( sendredpack);
+		String secapiPayRefundXML = XMLConverUtil.convertToXML(sendredpack);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(xmlHeader)
 				.setUri(baseURI()+ "/mmpaymkttransfers/sendredpack")
@@ -524,10 +539,10 @@ public class PayMchAPI extends BaseAPI{
 	 * @return SendredpackResult
 	 */
 	public static SendredpackResult mmpaymkttransfersSendgroupredpack(Sendgroupredpack sendgroupredpack,String key){
-		Map<String,String> map = MapUtil.objectToMap( sendgroupredpack);
+		Map<String,String> map = MapUtil.objectToMap(sendgroupredpack);
 		String sign = SignatureUtil.generateSign(map,sendgroupredpack.getSign_type(),key);
 		sendgroupredpack.setSign(sign);
-		String secapiPayRefundXML = XMLConverUtil.convertToXML( sendgroupredpack);
+		String secapiPayRefundXML = XMLConverUtil.convertToXML(sendgroupredpack);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(xmlHeader)
 				.setUri(baseURI()+ "/mmpaymkttransfers/sendgroupredpack")
@@ -545,10 +560,10 @@ public class PayMchAPI extends BaseAPI{
 	 * @return GethbinfoResult
 	 */
 	public static GethbinfoResult mmpaymkttransfersGethbinfo(Gethbinfo gethbinfo,String key){
-		Map<String,String> map = MapUtil.objectToMap( gethbinfo);
+		Map<String,String> map = MapUtil.objectToMap(gethbinfo);
 		String sign = SignatureUtil.generateSign(map,gethbinfo.getSign_type(),key);
 		gethbinfo.setSign(sign);
-		String secapiPayRefundXML = XMLConverUtil.convertToXML( gethbinfo);
+		String secapiPayRefundXML = XMLConverUtil.convertToXML(gethbinfo);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(xmlHeader)
 				.setUri(baseURI()+ "/mmpaymkttransfers/gethbinfo")
@@ -575,10 +590,10 @@ public class PayMchAPI extends BaseAPI{
 	 * @return TransfersResult
 	 */
 	public static TransfersResult mmpaymkttransfersPromotionTransfers(Transfers transfers,String key){
-		Map<String,String> map = MapUtil.objectToMap( transfers);
+		Map<String,String> map = MapUtil.objectToMap(transfers);
 		String sign = SignatureUtil.generateSign(map,transfers.getSign_type(),key);
 		transfers.setSign(sign);
-		String secapiPayRefundXML = XMLConverUtil.convertToXML( transfers);
+		String secapiPayRefundXML = XMLConverUtil.convertToXML(transfers);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(xmlHeader)
 				.setUri(baseURI()+ "/mmpaymkttransfers/promotion/transfers")
@@ -595,10 +610,10 @@ public class PayMchAPI extends BaseAPI{
 	 * @return GettransferinfoResult
 	 */
 	public static GettransferinfoResult mmpaymkttransfersGettransferinfo(Gettransferinfo gettransferinfo,String key){
-		Map<String,String> map = MapUtil.objectToMap( gettransferinfo);
+		Map<String,String> map = MapUtil.objectToMap(gettransferinfo);
 		String sign = SignatureUtil.generateSign(map,gettransferinfo.getSign_type(),key);
 		gettransferinfo.setSign(sign);
-		String secapiPayRefundXML = XMLConverUtil.convertToXML( gettransferinfo);
+		String secapiPayRefundXML = XMLConverUtil.convertToXML(gettransferinfo);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(xmlHeader)
 				.setUri(baseURI()+ "/mmpaymkttransfers/gettransferinfo")
@@ -617,7 +632,7 @@ public class PayMchAPI extends BaseAPI{
 		Map<String,String> map = MapUtil.objectToMap(payContractorder);
 		String sign = SignatureUtil.generateSign(map,payContractorder.getSign_type(),key);
 		payContractorder.setSign(sign);
-		String secapiPayRefundXML = XMLConverUtil.convertToXML( payContractorder);
+		String secapiPayRefundXML = XMLConverUtil.convertToXML(payContractorder);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(xmlHeader)
 				.setUri(baseURI()+ "/pay/contractorder")
@@ -633,10 +648,10 @@ public class PayMchAPI extends BaseAPI{
 	 * @return PappayapplyResult
 	 */
 	public static PappayapplyResult payPappayapply(Pappayapply pappayapply,String key){
-		Map<String,String> map = MapUtil.objectToMap( pappayapply);
+		Map<String,String> map = MapUtil.objectToMap(pappayapply);
 		String sign = SignatureUtil.generateSign(map,pappayapply.getSign_type(),key);
 		pappayapply.setSign(sign);
-		String secapiPayRefundXML = XMLConverUtil.convertToXML( pappayapply);
+		String secapiPayRefundXML = XMLConverUtil.convertToXML(pappayapply);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(xmlHeader)
 				.setUri(baseURI()+ "/pay/pappayapply")
@@ -737,7 +752,7 @@ public class PayMchAPI extends BaseAPI{
 	public static SecapiPayProfitsharingResult secapiPayProfitsharing(SecapiPayProfitsharing secapiPayProfitsharing,String key){
 		Map<String,String> map = MapUtil.objectToMap(secapiPayProfitsharing, "receivers");
 		if(secapiPayProfitsharing.getReceivers() != null){
-			map.put("receivers", JsonUtil.toJSONString(secapiPayProfitsharing.getReceivers()));
+			map.put("receivers", WxJsonUtil.toJSONString(secapiPayProfitsharing.getReceivers()));
 		}
 		String sign = SignatureUtil.generateSign(map,secapiPayProfitsharing.getSign_type() == null? "HMAC-SHA256": secapiPayProfitsharing.getSign_type(),key);
 		secapiPayProfitsharing.setSign(sign);
@@ -760,7 +775,7 @@ public class PayMchAPI extends BaseAPI{
 	public static SecapiPayProfitsharingResult secapiPayMultiprofitsharing(SecapiPayProfitsharing secapiPayProfitsharing,String key){
 		Map<String,String> map = MapUtil.objectToMap(secapiPayProfitsharing, "receivers");
 		if(secapiPayProfitsharing.getReceivers() != null){
-			map.put("receivers", JsonUtil.toJSONString(secapiPayProfitsharing.getReceivers()));
+			map.put("receivers", WxJsonUtil.toJSONString(secapiPayProfitsharing.getReceivers()));
 		}
 		String sign = SignatureUtil.generateSign(map,secapiPayProfitsharing.getSign_type() == null? "HMAC-SHA256": secapiPayProfitsharing.getSign_type(),key);
 		secapiPayProfitsharing.setSign(sign);
@@ -823,7 +838,7 @@ public class PayMchAPI extends BaseAPI{
 	public static MchBaseResult payProfitsharingaddreceiver(PayProfitsharingOperation payProfitsharingOperation,String key){
 		Map<String,String> map = MapUtil.objectToMap(payProfitsharingOperation, "receiver");
 		if(payProfitsharingOperation.getReceiver() != null){
-			map.put("receiver", JsonUtil.toJSONString(payProfitsharingOperation.getReceiver()));
+			map.put("receiver", WxJsonUtil.toJSONString(payProfitsharingOperation.getReceiver()));
 		}
 		String sign = SignatureUtil.generateSign(map,payProfitsharingOperation.getSign_type() == null? "HMAC-SHA256": payProfitsharingOperation.getSign_type(),key);
 		payProfitsharingOperation.setSign(sign);
@@ -846,7 +861,7 @@ public class PayMchAPI extends BaseAPI{
 	public static MchBaseResult payProfitsharingremovereceiver(PayProfitsharingOperation payProfitsharingOperation,String key){
 		Map<String,String> map = MapUtil.objectToMap(payProfitsharingOperation, "receiver");
 		if(payProfitsharingOperation.getReceiver() != null){
-			map.put("receiver", JsonUtil.toJSONString(payProfitsharingOperation.getReceiver()));
+			map.put("receiver", WxJsonUtil.toJSONString(payProfitsharingOperation.getReceiver()));
 		}
 		String sign = SignatureUtil.generateSign(map,payProfitsharingOperation.getSign_type() == null? "HMAC-SHA256": payProfitsharingOperation.getSign_type(),key);
 		payProfitsharingOperation.setSign(sign);
@@ -859,4 +874,105 @@ public class PayMchAPI extends BaseAPI{
 		return LocalHttpClient.executeXmlResult(httpUriRequest,MchBaseResult.class, payProfitsharingOperation.getSign_type() == null? "HMAC-SHA256": payProfitsharingOperation.getSign_type(),key);
 	}
 	
+	/**
+	 * 企业付款到银行卡 <br>
+	 * 接口调用规则： <br>
+	 * ◆ 单商户日限额——单日10万元 <br>
+	 * ◆ 单次限额——单次2万元 <br>
+	 * ◆ 单商户给同一银行卡单日限额——单日2万元 <br>
+	 * 
+	 * @author haixiapan
+	 * @param payBank
+	 * @param key
+	 * @return PayBankResult
+	 * @throws Exception
+	 */
+	public static PayBankResult mmpaysptransPayBank(PayBank payBank, String key) throws Exception {
+		Map<String, String> map = MapUtil.objectToMap(payBank);
+		String sign = SignatureUtil.generateSign(map, payBank.getSign_type(), key);
+		payBank.setSign(sign);
+		File publicKeyFile = buildPublicKeyFile(payBank.getMch_id(), key);
+		payBank.setEnc_bank_no(encryptRSA(publicKeyFile, payBank.getEnc_bank_no()));
+		payBank.setEnc_true_name(encryptRSA(publicKeyFile, payBank.getEnc_true_name()));
+		publicKeyFile.deleteOnExit();
+		String secapiPayRefundXML = XMLConverUtil.convertToXML(payBank);
+		HttpUriRequest httpUriRequest = RequestBuilder.post().setHeader(xmlHeader)
+				.setUri("https://api.mch.weixin.qq.com/mmpaysptrans/pay_bank")
+				.setEntity(new StringEntity(secapiPayRefundXML, Charset.forName("utf-8"))).build();
+		return LocalHttpClient.keyStoreExecuteXmlResult(payBank.getMch_id(), httpUriRequest, PayBankResult.class,
+				payBank.getSign_type(), key);
+	}
+
+	/**
+	 * RSA加密
+	 * @author haixiapan
+	 * @param publicKeyFile
+	 * @param srcString
+	 * @return
+	 * @throws Exception
+	 */
+	public static String encryptRSA(File publicKeyFile, String srcString) throws Exception {
+		try {
+			Security.addProvider(new BouncyCastleProvider());
+			Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-1ANDMGF1PADDING");
+			try (PEMParser reader = new PEMParser(new FileReader(publicKeyFile))) {
+				final PublicKey publicKey = new JcaPEMKeyConverter().setProvider("BC")
+						.getPublicKey((SubjectPublicKeyInfo) reader.readObject());
+
+				cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+				byte[] encrypt = cipher.doFinal(srcString.getBytes());
+				return Base64.encodeBase64String(encrypt);
+			}
+		} catch (Exception e) {
+			throw new Exception("error", e);
+		}
+	}
+
+	/**
+	 * 获取RSA加密公钥
+	 * @author haixiapan
+	 * @param mch_id
+	 * @param key
+	 * @return
+	 * @throws Exception
+	 */
+	public static File buildPublicKeyFile(String mch_id, String key) throws Exception {
+		try {
+			String publicKeyStr = getPublicKey(mch_id, key);
+			logger.info("publicKeyStr:" + publicKeyStr);
+			Path tmpFile = Files.createTempFile("payToBank", ".pem");
+			Files.write(tmpFile, publicKeyStr.getBytes());
+			return tmpFile.toFile();
+		} catch (Exception e) {
+			throw new Exception("error", e);
+		}
+	}
+
+	/**
+	 * 获取RSA公钥API
+	 * @author haixiapan
+	 * @param mch_id
+	 * @param key
+	 * @return
+	 */
+	public static String getPublicKey(String mch_id, String key) {
+		MchBaseResult mchBaseResult = new MchBaseResult();
+		mchBaseResult.setMch_id(mch_id);
+		mchBaseResult.setNonce_str(UUID.randomUUID().toString().replace("-", ""));
+		Map<String, String> map = MapUtil.objectToMap(mchBaseResult);
+		String sign = SignatureUtil.generateSign(map, mchBaseResult.getSign_type(), key);
+		mchBaseResult.setSign(sign);
+		String closeorderXML = XMLConverUtil.convertToXML(mchBaseResult);
+		HttpUriRequest httpUriRequest = RequestBuilder.post().setHeader(xmlHeader)
+				.setUri("https://fraud.mch.weixin.qq.com/risk/getpublickey")
+				.setEntity(new StringEntity(closeorderXML, Charset.forName("utf-8"))).build();
+//		RiskPublickey result = LocalHttpClient.executeXmlResult(httpUriRequest, RiskPublickey.class,
+//				mchBaseResult.getSign_type(), key);
+		RiskPublickey result = LocalHttpClient.keyStoreExecuteXmlResult(mch_id, httpUriRequest, RiskPublickey.class,
+				mchBaseResult.getSign_type(), key);
+		if (result != null) {
+			return result.getPub_key();
+		}
+		return "";
+	}
 }

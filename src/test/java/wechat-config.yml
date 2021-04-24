@@ -1,0 +1,14 @@
+wxmp: 
+  configs: 
+    #xx公众号
+    - appId: wx123456
+      secret: b41d7cf48123456123456123456123456
+      token: TestEone
+      aesKey: WIQgksHnUz123456123456123456123456123456
+      pay: 
+        appId: wx123456
+        mchId: 1522123456
+        mchKey: NFnDFye0I9123456123456123456
+        keyPath: classpath:config/apiclient_cert.p12
+        #subAppId: #服务商模式下的子商户公众账号ID
+        #subMchId: #服务商模式下的子商户号

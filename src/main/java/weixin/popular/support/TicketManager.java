@@ -1,213 +1,123 @@
 package weixin.popular.support;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import weixin.popular.api.TicketAPI;
-import weixin.popular.bean.ticket.Ticket;
+import weixin.popular.error.WxErrorException;
+import weixin.popular.support.handler.WeixinHandler;
 
 /**
  * TicketManager ticket(jsapi | wx_card) 自动刷新
+ * 
  * @author LiYi
  *
  */
 public class TicketManager {
-	
-	private static final Logger logger = LoggerFactory.getLogger(TicketManager.class);
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(TicketManager.class);
+    private static WeixinHandler weixinHandler;
 
-	private static ScheduledExecutorService scheduledExecutorService;
+    // private static String jsapiTicketPrefixKey(String appId) {
+    // return JS_TICKET_KEY_PREFIX + appId;
+    // }
 
-	private static Map<String,String> ticketMap = new ConcurrentHashMap<String,String>();
+    // private static String wxcardTicketPrefixKey(String appId) {
+    // return WXCARD_TICKET_KEY_PREFIX + appId;
+    // }
 
-	private static Map<String,ScheduledFuture<?>> futureMap = new ConcurrentHashMap<String, ScheduledFuture<?>>();
+    public static synchronized void updateJsapiTicket(String appId, String ticket, int expiresInSeconds) {
+        weixinHandler.updateJsapiTicket(appId, ticket, expiresInSeconds);
+    }
 
-	private static int poolSize = 2;
-	
-	private static boolean daemon = Boolean.TRUE;
-	
-	private static String firestAppid;
-	
-	private static final String KEY_JOIN = "__";
-	
-	/**
-	 * 初始化 scheduledExecutorService
-	 */
-	private static void initScheduledExecutorService(){
-		logger.info("daemon:{},poolSize:{}",daemon,poolSize);
-		scheduledExecutorService =  Executors.newScheduledThreadPool(poolSize,new ThreadFactory() {
+    public static void expireJsapiTicket(String appId) {
+        weixinHandler.expireJsapiTicket(appId);
+    }
 
-			@Override
-			public Thread newThread(Runnable arg0) {
-				Thread thread = Executors.defaultThreadFactory().newThread(arg0);
-				//设置守护线程
-				thread.setDaemon(daemon);
-				return thread;
-			}
-		});
-	}
+    public static boolean isJsapiTicketExpired(String appId) {
+        return weixinHandler.isJsapiTicketExpired(appId);
+    }
 
-	/**
-	 * 设置线程池
-	 * @param poolSize poolSize
-	 */
-	public static void setPoolSize(int poolSize){
-		TicketManager.poolSize = poolSize;
-	}
+    public static String getJsapiTicketInCache(String appId) {
+        return weixinHandler.getJsapiTicketInCache(appId);
+    }
 
-	/**
-	 * 设置线程方式
-	 * @param daemon daemon
-	 */
-	public static void setDaemon(boolean daemon) {
-		TicketManager.daemon = daemon;
-	}
-	
-	/**
-	 * 初始化ticket(jsapi) 刷新，每119分钟刷新一次。<br>
-	 * 依赖TokenManager
-	 * @param appid appid
-	 */
-	public static void init(final String appid){
-		init(appid,0,60*119);
-	}
-	
-	/**
-	 * 初始化ticket 刷新，每119分钟刷新一次。<br>
-	 * 依赖TokenManager
-	 * @since 2.8.2 
-	 * @param appid appid
-	 * @param types [jsapi,wx_card]
-	 */
-	public static void init(final String appid,String types){
-		init(appid,0,60*119,types);
-	}
-	
-	/**
-	 * 初始化ticket(jsapi) 刷新 
-	 * 依赖TokenManager
-	 * @since 2.6.1
-	 * @param appid appid
-	 * @param initialDelay 首次执行延迟（秒）
-	 * @param delay 执行间隔（秒）
-	 */
-	public static void init(final String appid,int initialDelay,int delay){
-		init(appid,initialDelay, delay,"jsapi");
-	}
-	
-	/**
-	 * 初始化ticket 刷新
-	 * 依赖TokenManager
-	 * @since 2.8.2
-	 * @param appid appid
-	 * @param initialDelay 首次执行延迟（秒）
-	 * @param delay 执行间隔（秒）
-	 * @param types ticket 类型  [jsapi,wx_card]
-	 */
-	public static void init(final String appid,int initialDelay,int delay,String... types){
-		if(firestAppid == null){
-			firestAppid = appid;
-		}
-		for(final String type : types){
-			final String key = appid + KEY_JOIN + type;
-			if(scheduledExecutorService == null){
-				initScheduledExecutorService();
-			}
-			if(futureMap.containsKey(key)){
-				futureMap.get(key).cancel(true);
-			}
-			//立即执行一次
-			if(initialDelay == 0){
-				doRun(appid, type, key);
-			}
-			ScheduledFuture<?> scheduledFuture =  scheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
-				@Override
-				public void run() {
-					doRun(appid, type, key);
-				}
-			},initialDelay == 0 ? delay : initialDelay,delay,TimeUnit.SECONDS);
-			futureMap.put(key,scheduledFuture);
-		}
-	}
-	
-	private static void doRun(final String appid, final String type, final String key) {
-		try {
-			String access_token = TokenManager.getToken(appid);
-			Ticket ticket = TicketAPI.ticketGetticket(access_token,type);
-			ticketMap.put(key,ticket.getTicket());
-			logger.info("TICKET refurbish with appid:{} type:{}",appid,type);
-		} catch (Exception e) {
-			logger.error("TICKET refurbish error with appid:{} type:{}",appid,type);
-			logger.error("", e);
-		}
-	}
+    public static synchronized void updateWxCardTicket(String appId, String ticket, int expiresInSeconds) {
+        weixinHandler.updateWxCardTicket(appId, ticket, expiresInSeconds);
+    }
 
-	/**
-	 * 取消 ticket 刷新
-	 */
-	public static void destroyed(){
-		scheduledExecutorService.shutdownNow();
-		logger.info("destroyed");
-	}
-	
-	/**
-	 * 取消刷新
-	 * @param appid appid
-	 */
-	public static void destroyed(String appid){
-		destroyed(appid,"jsapi","wx_card");
-	}
-	
-	/**
-	 * 取消刷新
-	 * @param appid appid
-	 * @param types ticket 类型  [jsapi,wx_card]
-	 */
-	public static void destroyed(String appid,String... types){
-		for(String type : types){
-			String key = appid + KEY_JOIN + type;
-			if(futureMap.containsKey(key)){
-				futureMap.get(key).cancel(true);
-				logger.info("destroyed appid:{} type:{}",appid,type);
-			}
-		}
-	}
+    public static void expireWxCardTicket(String appId) {
+        weixinHandler.expireWxCardTicket(appId);
+    }
 
-	/**
-	 * 获取 ticket(jsapi)
-	 * @param appid appid
-	 * @return ticket
-	 */
-	public static String getTicket(final String appid){
-		return getTicket(appid ,"jsapi");
-	}
-	
-	
-	/**
-	 * 获取 ticket
-	 * @param appid appid
-	 * @param type jsapi or wx_card
-	 * @return ticket
-	 */
-	public static String getTicket(final String appid,String type){
-		return ticketMap.get(appid + KEY_JOIN + type);
-	}
-	
+    public static boolean isWxCardTicketExpired(String appId) {
+        return weixinHandler.isWxCardTicketExpired(appId);
+    }
 
-	/**
-	 * 获取第一个appid 的第一个类型的 ticket
-	 * 适用于单一微信号
-	 * @return ticket
-	 */
-	public static String getDefaultTicket(){
-		return ticketMap.get(firestAppid);
-	}
+    public static String getWxCardTicketInCache(String appId) {
+        return weixinHandler.getWxCardTicketInCache(appId);
+    }
+
+    /**
+     * 获取 jsapi ticket
+     * 
+     * @param appId
+     *            appId
+     * @return token
+     * @throws WxErrorException
+     */
+    public static String getJsapiTicket(String appId) throws WxErrorException {
+        return weixinHandler.getJsapiTicket(appId);
+    }
+
+    public static String getJsapiTicketOrNull(String appId) {
+        try {
+            return weixinHandler.getJsapiTicket(appId);
+        } catch (WxErrorException e) {
+        }
+        return null;
+    }
+
+    /**
+     * 获取 wxcard ticket
+     * 
+     * @param appId
+     *            appId
+     * @return token
+     * @throws WxErrorException
+     */
+    public static String getWxCardTicket(String appId) throws WxErrorException {
+        return weixinHandler.getWxCardTicket(appId);
+    }
+
+    public static String getWxCardTicketOrNull(String appId) {
+        try {
+            return weixinHandler.getWxCardTicket(appId);
+        } catch (WxErrorException e) {
+        }
+        return null;
+    }
+
+    /**
+     * 强制刷新 （15s内只会刷新一次）
+     * 
+     * @param appId
+     * @return
+     * @throws WxErrorException
+     */
+    public static String getJsapiTicketForceRefresh(String appId) throws WxErrorException {
+        return weixinHandler.getJsapiTicketForceRefresh(appId);
+    }
+
+    /**
+     * 强制刷新 （15s内只会刷新一次）
+     * 
+     * @param appId
+     * @return
+     * @throws WxErrorException
+     */
+    public static String getWxCardTicketForceRefresh(String appId) throws WxErrorException {
+        return weixinHandler.getWxCardTicketForceRefresh(appId);
+    }
+
+    static void setWeixinHandler(WeixinHandler handler) {
+        weixinHandler = handler;
+    }
 
 }

@@ -15,7 +15,7 @@ import weixin.popular.bean.wxopen.TemplateListResult;
 import weixin.popular.bean.wxopen.Wxamplink;
 import weixin.popular.bean.wxopen.WxamplinkgetResult;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 
 /**
  * 微信小程序
@@ -47,7 +47,7 @@ public class WxopenAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static BaseResult wxamplink(String access_token,Wxamplink wxamplink){
-		String json = JsonUtil.toJSONString(wxamplink);
+		String json = WxJsonUtil.toJSONString(wxamplink);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(jsonHeader)
 				.setUri(BASE_URI+"/cgi-bin/wxopen/wxamplink")
@@ -121,7 +121,7 @@ public class WxopenAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static TemplateAddResult templateAdd(String access_token,String id,List<Integer> keyword_id_list){
-		String json = String.format("{\"id\":\"%s\",\"keyword_id_list\":%s}", id,JsonUtil.toJSONString(keyword_id_list));
+		String json = String.format("{\"id\":\"%s\",\"keyword_id_list\":%s}", id,WxJsonUtil.toJSONString(keyword_id_list));
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(jsonHeader)
 				.setUri(BASE_URI+"/cgi-bin/wxopen/template/add")

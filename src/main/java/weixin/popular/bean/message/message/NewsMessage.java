@@ -1,5 +1,6 @@
 package weixin.popular.bean.message.message;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,25 +13,26 @@ import java.util.List;
 public class NewsMessage extends Message {
 
     public NewsMessage() {
+    	super.setMsgtype("news");
     }
 
-    public NewsMessage(String touser, List<Article> articles) {
+    public NewsMessage(String touser, List<WxArticle> wxArticleList) {
         super(touser, "news");
         this.news = new News();
-        this.news.setArticles(articles);
+        this.news.setArticles(wxArticleList);
     }
     
     /**
      * @since 2.8.26
      * @param touser
-     * @param article
+     * @param wxArticle
      */
-    public NewsMessage(String touser, Article article) {
-        super(touser, "news");
-        this.news = new News();
-        this.news.setArticles(Collections.singletonList(article));
+    public NewsMessage(String touser, WxArticle wxArticle) {
+    	super(touser, "news");
+    	this.news = new News();
+    	this.news.setArticles(Collections.singletonList(wxArticle));
     }
-
+    
     private News news;
 
     public News getNews() {
@@ -43,67 +45,20 @@ public class NewsMessage extends Message {
 
     public static class News {
 
-        private List<Article> articles;
+        private List<WxArticle> articles;
 
-        public List<Article> getArticles() {
+        public List<WxArticle> getArticles() {
             return articles;
         }
-
-        public void setArticles(List<Article> articles) {
-            this.articles = articles;
+        public void setArticles(List<WxArticle> wxArticleList) {
+            this.articles = wxArticleList;
+        }
+        public void addArticle(WxArticle wxArticle) {
+        	if(this.articles == null) {
+        		this.articles = new ArrayList<WxArticle>();
+        	}
+        	this.articles.add(wxArticle);
         }
     }
 
-    public static class Article {
-        private String title;
-        private String description;
-        private String url;
-        private String picurl;
-
-        public Article(){
-
-        }
-
-        public Article(String title, String description, String url,
-                       String picurl) {
-            super();
-            this.title = title;
-            this.description = description;
-            this.url = url;
-            this.picurl = picurl;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-
-        public String getPicurl() {
-            return picurl;
-        }
-
-        public void setPicurl(String picurl) {
-            this.picurl = picurl;
-        }
-
-    }
 }

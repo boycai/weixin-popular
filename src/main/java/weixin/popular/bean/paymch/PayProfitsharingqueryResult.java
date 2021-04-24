@@ -20,6 +20,9 @@ public class PayProfitsharingqueryResult extends MchBase {
 	private String status;
 
 	private String close_reason;
+	
+	private Integer amount;//分账金额  分账完结的分账金额，单位为分， 仅当查询分账完结的执行结果时，存在本字段
+	private String description;//分账描述  分账完结的原因描述，仅当查询分账完结的执行结果时，存在本字段
 
 	@XmlJavaTypeAdapter(value = ReceiverQuery.JsonXmlAdapter.class)
 	private List<ReceiverQuery> receivers;
@@ -70,6 +73,22 @@ public class PayProfitsharingqueryResult extends MchBase {
 
 	public void setReceivers(List<ReceiverQuery> receivers) {
 		this.receivers = receivers;
+	}
+
+	public Integer getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Integer amount) {
+		this.amount = amount;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

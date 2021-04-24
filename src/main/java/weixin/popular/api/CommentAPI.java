@@ -12,7 +12,7 @@ import weixin.popular.bean.comment.CommentListResult;
 import weixin.popular.bean.comment.Params;
 import weixin.popular.bean.comment.ReplyAdd;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 
 /**
  * 图文消息留言管理接口
@@ -65,7 +65,7 @@ public class CommentAPI extends BaseAPI{
 	 * @return CommentListResult CommentListResult
 	 */
 	public static CommentListResult list(String access_token,CommentList commentList){
-		String json = JsonUtil.toJSONString(commentList);
+		String json = WxJsonUtil.toJSONString(commentList);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 										.setHeader(jsonHeader)
 										.setUri(BASE_URI+"/cgi-bin/comment/list")
@@ -82,7 +82,7 @@ public class CommentAPI extends BaseAPI{
 	 * @return BaseResult BaseResult
 	 */
 	public static BaseResult markelect(String access_token,Params markelect){
-		String json = JsonUtil.toJSONString(markelect);
+		String json = WxJsonUtil.toJSONString(markelect);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 										.setHeader(jsonHeader)
 										.setUri(BASE_URI+"/cgi-bin/comment/markelect")
@@ -99,7 +99,7 @@ public class CommentAPI extends BaseAPI{
 	 * @return BaseResult BaseResult
 	 */
 	public static BaseResult unmarkelect(String access_token,Params unmarkelect){
-		String json = JsonUtil.toJSONString(unmarkelect);
+		String json = WxJsonUtil.toJSONString(unmarkelect);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 										.setHeader(jsonHeader)
 										.setUri(BASE_URI+"/cgi-bin/comment/unmarkelect")
@@ -116,7 +116,7 @@ public class CommentAPI extends BaseAPI{
 	 * @return BaseResult BaseResult
 	 */
 	public static BaseResult delete(String access_token,Params delete){
-		String json = JsonUtil.toJSONString(delete);
+		String json = WxJsonUtil.toJSONString(delete);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 										.setHeader(jsonHeader)
 										.setUri(BASE_URI+"/cgi-bin/comment/delete")
@@ -133,7 +133,7 @@ public class CommentAPI extends BaseAPI{
 	 * @return BaseResult BaseResult
 	 */
 	public static BaseResult replyAdd(String access_token,ReplyAdd replyAdd){
-		String json = JsonUtil.toJSONString(replyAdd);
+		String json = WxJsonUtil.toJSONString(replyAdd);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 										.setHeader(jsonHeader)
 										.setUri(BASE_URI+"/cgi-bin/comment/reply/add")
@@ -150,7 +150,7 @@ public class CommentAPI extends BaseAPI{
 	 * @return BaseResult BaseResult
 	 */
 	public static BaseResult replyDelete(String access_token,Params delete){
-		String json = JsonUtil.toJSONString(delete);
+		String json = WxJsonUtil.toJSONString(delete);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 										.setHeader(jsonHeader)
 										.setUri(BASE_URI+"/cgi-bin/comment/reply/delete")

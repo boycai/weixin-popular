@@ -46,7 +46,7 @@ public abstract class WxaUtil {
 			cipher.init(Cipher.DECRYPT_MODE, sKeySpec, new IvParameterSpec(Base64.decodeBase64(iv)));
 			byte[] resultByte = cipher.doFinal(Base64.decodeBase64(encryptedData));
 			String data = new String(PKCS7Encoder.decode(resultByte), StandardCharsets.UTF_8);
-			return JsonUtil.parseObject(data, WxaDUserInfo.class);
+			return WxJsonUtil.parseObject(data, WxaDUserInfo.class);
 		} catch (Exception e) {
 			logger.error("", e);
 		}
@@ -63,7 +63,7 @@ public abstract class WxaUtil {
 	public static WxaUserInfo validateUserInfo(String session_key, String rawData, String signature) {
 		try {
 			if (DigestUtils.shaHex(rawData + session_key).equals(signature)) {
-				return JsonUtil.parseObject(rawData, WxaUserInfo.class);
+				return WxJsonUtil.parseObject(rawData, WxaUserInfo.class);
 			}
 		} catch (Exception e) {
 			logger.error("", e);

@@ -74,7 +74,7 @@ import weixin.popular.bean.shakearound.statistics.pagelist.StatisticsPageListRes
 import weixin.popular.bean.shakearound.user.getshakeinfo.UserGetShakeInfo;
 import weixin.popular.bean.shakearound.user.getshakeinfo.UserGetShakeInfoResult;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 import weixin.popular.util.StreamUtils;
 
 /**
@@ -111,7 +111,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static AccountRegisterResult accountRegister(String accessToken,
                                                         AccountRegister accountRegister) {
         return accountRegister(accessToken,
-                JsonUtil.toJSONString(accountRegister));
+                WxJsonUtil.toJSONString(accountRegister));
     }
 
     /**
@@ -143,7 +143,7 @@ public class ShakeAroundAPI extends BaseAPI {
      */
     public static DeviceApplyIdResult deviceApplyId(String accessToken,
                                                     DeviceApplyId deviceApplyId) {
-        return deviceApplyId(accessToken, JsonUtil.toJSONString(deviceApplyId));
+        return deviceApplyId(accessToken, WxJsonUtil.toJSONString(deviceApplyId));
     }
 
     /**
@@ -176,7 +176,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static DeviceApplyStatusResult deviceApplyStatus(String accessToken,
                                                             DeviceApplyStatus deviceApplyStatus) {
         return deviceApplyStatus(accessToken,
-                JsonUtil.toJSONString(deviceApplyStatus));
+                WxJsonUtil.toJSONString(deviceApplyStatus));
     }
 
     /**
@@ -209,7 +209,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static DeviceBindLocationResult deviceBindLocation(
             String accessToken, DeviceBindLocation deviceBindLocation) {
         return deviceBindLocation(accessToken,
-                JsonUtil.toJSONString(deviceBindLocation));
+                WxJsonUtil.toJSONString(deviceBindLocation));
     }
 
     /**
@@ -242,7 +242,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static DeviceBindPageResult deviceBindPage(String accessToken,
                                                       DeviceBindPage deviceBindPage) {
         return deviceBindPage(accessToken,
-                JsonUtil.toJSONString(deviceBindPage));
+                WxJsonUtil.toJSONString(deviceBindPage));
     }
 
     /**
@@ -275,7 +275,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static DeviceGroupAddResult deviceGroupAdd(String accessToken,
                                                       DeviceGroupAdd deviceGroupAdd) {
         return deviceGroupAdd(accessToken,
-                JsonUtil.toJSONString(deviceGroupAdd));
+                WxJsonUtil.toJSONString(deviceGroupAdd));
     }
 
     /**
@@ -308,7 +308,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static DeviceGroupAddDeviceResult deviceGroupAddDevice(
             String accessToken, DeviceGroupAddDevice deviceGroupAddDevice) {
         return deviceGroupAddDevice(accessToken,
-                JsonUtil.toJSONString(deviceGroupAddDevice));
+                WxJsonUtil.toJSONString(deviceGroupAddDevice));
     }
 
     /**
@@ -341,7 +341,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static DeviceGroupDeleteResult deviceGroupDelete(String accessToken,
                                                             DeviceGroupDelete deviceGroupDelete) {
         return deviceGroupDelete(accessToken,
-                JsonUtil.toJSONString(deviceGroupDelete));
+                WxJsonUtil.toJSONString(deviceGroupDelete));
     }
 
     /**
@@ -374,7 +374,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static DeviceGroupDeleteDeviceResult deviceGroupDeleteDevice(
             String accessToken, DeviceGroupDeleteDevice deviceGroupDeleteDevice) {
         return deviceGroupDeleteDevice(accessToken,
-                JsonUtil.toJSONString(deviceGroupDeleteDevice));
+                WxJsonUtil.toJSONString(deviceGroupDeleteDevice));
     }
 
     /**
@@ -407,7 +407,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static DeviceGroupGetDetailResult deviceGroupGetDetail(
             String accessToken, DeviceGroupGetDetail deviceGroupGetDetail) {
         return deviceGroupGetDetail(accessToken,
-                JsonUtil.toJSONString(deviceGroupGetDetail));
+                WxJsonUtil.toJSONString(deviceGroupGetDetail));
     }
 
     /**
@@ -440,7 +440,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static DeviceGroupGetListResult deviceGroupGetList(
             String accessToken, DeviceGroupGetList deviceGroupGetList) {
         return deviceGroupGetList(accessToken,
-                JsonUtil.toJSONString(deviceGroupGetList));
+                WxJsonUtil.toJSONString(deviceGroupGetList));
     }
 
     /**
@@ -473,7 +473,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static DeviceGroupUpdateResult deviceGroupUpdate(String accessToken,
                                                             DeviceGroupUpdate deviceGroupUpdate) {
         return deviceGroupUpdate(accessToken,
-                JsonUtil.toJSONString(deviceGroupUpdate));
+                WxJsonUtil.toJSONString(deviceGroupUpdate));
     }
 
     /**
@@ -505,7 +505,7 @@ public class ShakeAroundAPI extends BaseAPI {
      */
     public static DeviceSearchResult deviceSearch(String accessToken,
                                                   DeviceSearch deviceSearch) {
-        return deviceSearch(accessToken, JsonUtil.toJSONString(deviceSearch));
+        return deviceSearch(accessToken, WxJsonUtil.toJSONString(deviceSearch));
     }
 
     /**
@@ -537,7 +537,7 @@ public class ShakeAroundAPI extends BaseAPI {
      */
     public static DeviceUpdateResult deviceUpdate(String accessToken,
                                                   DeviceUpdate deviceUpdate) {
-        return deviceUpdate(accessToken, JsonUtil.toJSONString(deviceUpdate));
+        return deviceUpdate(accessToken, WxJsonUtil.toJSONString(deviceUpdate));
     }
 
     /**
@@ -570,7 +570,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static LotteryAddLotteryInfoResult lotteryAddLotteryInfo(
             String accessToken, LotteryAddLotteryInfo lotteryAddLotteryInfo) {
         return lotteryAddLotteryInfo(accessToken,
-                JsonUtil.toJSONString(lotteryAddLotteryInfo));
+                WxJsonUtil.toJSONString(lotteryAddLotteryInfo));
     }
 
     /**
@@ -641,7 +641,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static LotterySetPrizeBucketResult lotterySetPrizeBucket(
             String accessToken, LotterySetPrizeBucket lotterySetPrizeBucket) {
         return lotterySetPrizeBucket(accessToken,
-                JsonUtil.toJSONString(lotterySetPrizeBucket));
+                WxJsonUtil.toJSONString(lotterySetPrizeBucket));
     }
 
     /**
@@ -724,7 +724,7 @@ public class ShakeAroundAPI extends BaseAPI {
      * @return result
      */
     public static PageAddResult pageAdd(String accessToken, PageAdd pageAdd) {
-        return pageAdd(accessToken, JsonUtil.toJSONString(pageAdd));
+        return pageAdd(accessToken, WxJsonUtil.toJSONString(pageAdd));
     }
 
     /**
@@ -755,7 +755,7 @@ public class ShakeAroundAPI extends BaseAPI {
      */
     public static PageDeleteResult pageDelete(String accessToken,
                                               PageDelete pageDelete) {
-        return pageDelete(accessToken, JsonUtil.toJSONString(pageDelete));
+        return pageDelete(accessToken, WxJsonUtil.toJSONString(pageDelete));
     }
 
     /**
@@ -787,7 +787,7 @@ public class ShakeAroundAPI extends BaseAPI {
      */
     public static PageSearchResult pageSearch(String accessToken,
                                               PageSearch pageSearch) {
-        return pageSearch(accessToken, JsonUtil.toJSONString(pageSearch));
+        return pageSearch(accessToken, WxJsonUtil.toJSONString(pageSearch));
     }
 
     /**
@@ -819,7 +819,7 @@ public class ShakeAroundAPI extends BaseAPI {
      */
     public static PageUpdateResult pageUpdate(String accessToken,
                                               PageUpdate pageUpdate) {
-        return pageUpdate(accessToken, JsonUtil.toJSONString(pageUpdate));
+        return pageUpdate(accessToken, WxJsonUtil.toJSONString(pageUpdate));
     }
 
     /**
@@ -852,7 +852,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static RelationSearchResult relationSearch(String accessToken,
                                                       RelationSearch relationSearch) {
         return relationSearch(accessToken,
-                JsonUtil.toJSONString(relationSearch));
+                WxJsonUtil.toJSONString(relationSearch));
     }
 
     /**
@@ -885,7 +885,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static StatisticsDeviceResult statisticsDevice(String accessToken,
                                                           StatisticsDevice statisticsDevice) {
         return statisticsDevice(accessToken,
-                JsonUtil.toJSONString(statisticsDevice));
+                WxJsonUtil.toJSONString(statisticsDevice));
     }
 
     /**
@@ -918,7 +918,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static StatisticsDeviceListResult statisticsDeviceList(
             String accessToken, StatisticsDeviceList statisticsDeviceList) {
         return statisticsDeviceList(accessToken,
-                JsonUtil.toJSONString(statisticsDeviceList));
+                WxJsonUtil.toJSONString(statisticsDeviceList));
     }
 
     /**
@@ -951,7 +951,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static StatisticsPageResult statisticsPage(String accessToken,
                                                       StatisticsPage statisticsPage) {
         return statisticsPage(accessToken,
-                JsonUtil.toJSONString(statisticsPage));
+                WxJsonUtil.toJSONString(statisticsPage));
     }
 
     /**
@@ -984,7 +984,7 @@ public class ShakeAroundAPI extends BaseAPI {
     public static StatisticsPageListResult statisticsPageList(
             String accessToken, StatisticsPageList statisticsPageList) {
         return statisticsPageList(accessToken,
-                JsonUtil.toJSONString(statisticsPageList));
+                WxJsonUtil.toJSONString(statisticsPageList));
     }
 
     /**
@@ -1037,6 +1037,6 @@ public class ShakeAroundAPI extends BaseAPI {
     public static UserGetShakeInfoResult userGetShakeInfo(String accessToken,
                                                           UserGetShakeInfo userGetShakeInfo) {
         return userGetShakeInfo(accessToken,
-                JsonUtil.toJSONString(userGetShakeInfo));
+                WxJsonUtil.toJSONString(userGetShakeInfo));
     }
 }

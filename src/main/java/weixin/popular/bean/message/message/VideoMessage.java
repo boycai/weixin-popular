@@ -35,11 +35,9 @@ public class VideoMessage extends Message {
         private String thumb_media_id;
 
         public Video() {
-
         }
 
         public Video(String media_id, String title, String description, String thumb_media_id) {
-            super();
             this.media_id = media_id;
             this.thumb_media_id = thumb_media_id;
             this.title = title;
@@ -47,7 +45,6 @@ public class VideoMessage extends Message {
         }
 
         public Video(String media_id, String title, String description) {
-            super();
             this.media_id = media_id;
             this.title = title;
             this.description = description;

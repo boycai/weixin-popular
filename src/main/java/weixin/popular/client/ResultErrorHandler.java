@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import weixin.popular.bean.BaseResult;
 import weixin.popular.bean.paymch.MchBase;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 
 /**
  * 返回数据错误处理
@@ -63,7 +63,7 @@ public abstract class ResultErrorHandler {
 							uriId,
 							request.getURI(),
 							content == null ? "multipart_form_data" : content,
-							result == null? null : JsonUtil.toJSONString(result));
+							result == null? null : WxJsonUtil.toJSONString(result));
 				}
 			}
 			this.handle(uriId,request.getURI().toString(),content,result);

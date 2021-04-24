@@ -2,7 +2,7 @@ package weixin.popular.bean.user;
 
 import weixin.popular.bean.BaseResult;
 
-public class User extends BaseResult {
+public class UserInfo extends BaseResult {
 
 	private Integer subscribe; // 用户是否订阅该公众号标识，值为0时，代表此用户没有关注该公众号，拉取不到其余信息。
 

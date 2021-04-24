@@ -23,6 +23,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
+import weixin.popular.util.WxRandomUtils;
+
 /**
  * 提供接收和推送给公众平台消息的加解密接口(UTF8编码的字符串).
  * <ol>
@@ -84,7 +86,7 @@ public class WXBizMsgCrypt {
 	}
 
 	// 随机生成16位字符串
-	String getRandomStr() {
+	/*String getRandomStr() {
 		String base = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 		Random random = new Random();
 		StringBuffer sb = new StringBuffer();
@@ -93,7 +95,7 @@ public class WXBizMsgCrypt {
 			sb.append(base.charAt(number));
 		}
 		return sb.toString();
-	}
+	}*/
 
 	/**
 	 * 对明文进行加密.
@@ -211,7 +213,7 @@ public class WXBizMsgCrypt {
 	 */
 	public String encryptMsg(String replyMsg, String timeStamp, String nonce) throws AesException {
 		// 加密
-		String encrypt = encrypt(getRandomStr(), replyMsg);
+		String encrypt = encrypt(WxRandomUtils.getRandomStr(), replyMsg);
 
 		// 生成安全签名
 		if (timeStamp == "") {

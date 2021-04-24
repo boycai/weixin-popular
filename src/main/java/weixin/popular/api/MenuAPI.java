@@ -13,7 +13,7 @@ import weixin.popular.bean.menu.MenuButtons;
 import weixin.popular.bean.menu.TrymatchResult;
 import weixin.popular.bean.menu.selfmenu.CurrentSelfmenuInfo;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 
 /**
  * 菜单API
@@ -45,7 +45,7 @@ public class MenuAPI extends BaseAPI{
 	 * @return BaseResult
 	 */
 	public static BaseResult menuCreate(String access_token,MenuButtons menuButtons){
-		String str = JsonUtil.toJSONString(menuButtons);
+		String str = WxJsonUtil.toJSONString(menuButtons);
 		return menuCreate(access_token,str);
 	}
 
@@ -100,7 +100,7 @@ public class MenuAPI extends BaseAPI{
 	 * @return BaseResult
 	 */
 	public static MenuAddconditionalResult menuAddconditional(String access_token,MenuButtons menuButtons){
-		String menuJson = JsonUtil.toJSONString(menuButtons);
+		String menuJson = WxJsonUtil.toJSONString(menuButtons);
 		return menuAddconditional(access_token,menuJson);
 	}
 	

@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import weixin.popular.bean.BaseResult;
 import weixin.popular.bean.sns.Jscode2sessionResult;
 import weixin.popular.bean.sns.SnsToken;
-import weixin.popular.bean.user.User;
+import weixin.popular.bean.user.UserInfo;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.EmojiUtil;
+import weixin.popular.util.WxEmojiUtil;
 
 /**
  * 网页授权
@@ -132,16 +132,16 @@ public class SnsAPI extends BaseAPI{
 	 * 5 PureText 纯文本<br>
 	 * @return User
 	 */
-	public static User userinfo(String access_token,String openid,String lang,int emoji){
+	public static UserInfo userinfo(String access_token,String openid,String lang,int emoji){
 		HttpUriRequest httpUriRequest = RequestBuilder.get()
 				.setUri(BASE_URI + "/sns/userinfo")
 				.addParameter(PARAM_ACCESS_TOKEN, access_token)
 				.addParameter("openid", openid)
 				.addParameter("lang", lang)
 				.build();
-		User user = LocalHttpClient.executeJsonResult(httpUriRequest,User.class);
+		UserInfo user = LocalHttpClient.executeJsonResult(httpUriRequest,UserInfo.class);
 		if(emoji != 0 && user != null && user.getNickname() != null){
-			user.setNickname_emoji(EmojiUtil.parse(user.getNickname(), emoji));
+			user.setNickname_emoji(WxEmojiUtil.parse(user.getNickname(), emoji));
 		}
 		return user;
 	}
@@ -153,12 +153,23 @@ public class SnsAPI extends BaseAPI{
 	 * @param lang 国家地区语言版本，zh_CN 简体，zh_TW 繁体，en 英语
 	 * @return User
 	 */
-	public static User userinfo(String access_token,String openid,String lang){
+	public static UserInfo userinfo(String access_token,String openid,String lang){
 		return userinfo(access_token, openid, lang,0);
+	}
+	
+	/**
+	 * 拉取用户信息(需scope为 snsapi_userinfo)
+	 * @param access_token access_token
+	 * @param openid openid
+	 * @param lang: zh_CN
+	 * @return User
+	 */
+	public static UserInfo userinfo(String access_token,String openid){
+		return userinfo(access_token, openid, "zh_CN", 0);
 	}
 
 	/**
-	 * 生成网页授权 URL
+	 * 生成网页授权 URL (微信公众号网页授权)
 	 * @param appid appid
 	 * @param redirect_uri 自动URLEncoder
 	 * @param snsapi_userinfo snsapi_userinfo
@@ -191,7 +202,7 @@ public class SnsAPI extends BaseAPI{
 			if(component_appid!=null){
 				sb.append("&component_appid=").append(component_appid);
 			}
-			 sb.append("#wechat_redirect");
+			sb.append("&connect_redirect=1#wechat_redirect");// [&connect_redirect=1] add by cailin
 			return sb.toString();
 		} catch (UnsupportedEncodingException e) {
 			logger.error("", e);

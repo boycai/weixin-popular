@@ -2,7 +2,7 @@ package weixin.popular.bean.paymch;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 
 public class SceneInfo {
 
@@ -127,12 +127,12 @@ public class SceneInfo {
 
 		@Override
 		public String marshal(SceneInfo arg0) throws Exception {
-			return "<![CDATA[" + JsonUtil.toJSONString(arg0) + "]]>";
+			return "<![CDATA[" + WxJsonUtil.toJSONString(arg0) + "]]>";
 		}
 
 		@Override
 		public SceneInfo unmarshal(String arg0) throws Exception {
-			return JsonUtil.parseObject(arg0, SceneInfo.class);
+			return WxJsonUtil.parseObject(arg0, SceneInfo.class);
 		}
 	}
 

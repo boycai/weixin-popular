@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import weixin.popular.bean.BaseResult;
 import weixin.popular.bean.wxa.*;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 import weixin.popular.util.StreamUtils;
 
 /**
@@ -41,14 +41,14 @@ public class WxaAPI extends BaseAPI {
 
 	/**
 	 * 修改服务器地址<br>
-     * 设置小程序服务器域名
+	 * 设置小程序服务器域名
 	 * @since 2.8.9
 	 * @param access_token access_token
 	 * @param modifyDomain modifyDomain
 	 * @return result
 	 */
 	public static ModifyDomainResult modify_domain(String access_token,ModifyDomain modifyDomain){
-		String json = JsonUtil.toJSONString(modifyDomain);
+		String json = WxJsonUtil.toJSONString(modifyDomain);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(jsonHeader)
 				.setUri(BASE_URI + "/wxa/modify_domain")
@@ -67,7 +67,7 @@ public class WxaAPI extends BaseAPI {
      * @return result
      */
     public static BaseResult setwebviewdomain(String access_token, SetWebviewDomain setWebviewDomain){
-        String json = JsonUtil.toJSONString(setWebviewDomain);
+        String json = WxJsonUtil.toJSONString(setWebviewDomain);
         HttpUriRequest httpUriRequest = RequestBuilder.post()
                 .setHeader(jsonHeader)
                 .setUri(BASE_URI + "/wxa/setwebviewdomain")
@@ -124,7 +124,7 @@ public class WxaAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static BaseResult commit(String access_token,Commit commit){
-		String json = JsonUtil.toJSONString(commit);
+		String json = WxJsonUtil.toJSONString(commit);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(jsonHeader)
 				.setUri(BASE_URI + "/wxa/commit")
@@ -160,7 +160,7 @@ public class WxaAPI extends BaseAPI {
 				}
 			}else{
 				String body = EntityUtils.toString(httpResponse.getEntity());
-				return JsonUtil.parseObject(body, GetQrcodeResult.class);
+				return WxJsonUtil.parseObject(body, GetQrcodeResult.class);
 			}
 		} catch (IOException e) {
 			logger.error("", e);
@@ -213,7 +213,7 @@ public class WxaAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static SubmitAuditResult submit_audit(String access_token,SubmitAudit submitAudit){
-		String json = JsonUtil.toJSONString(submitAudit);
+		String json = WxJsonUtil.toJSONString(submitAudit);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(jsonHeader)
 				.setUri(BASE_URI + "/wxa/submit_audit")
@@ -335,8 +335,8 @@ public class WxaAPI extends BaseAPI {
 	 * @param getwxacode getwxacode
 	 * @return BufferedImage BufferedImage
 	 */
-	public static BufferedImage getwxacode(String access_token,Getwxacode getwxacode){
-		String json = JsonUtil.toJSONString(getwxacode);
+	public static WxaCodeResult getwxacode(String access_token,Getwxacode getwxacode){
+		String json = WxJsonUtil.toJSONString(getwxacode);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(jsonHeader)
 				.setUri(BASE_URI + "/wxa/getwxacode")
@@ -346,10 +346,20 @@ public class WxaAPI extends BaseAPI {
 		CloseableHttpResponse httpResponse = LocalHttpClient.execute(httpUriRequest);
 		try {
 			int status = httpResponse.getStatusLine().getStatusCode();
-            if (status == 200) {
-				byte[] bytes = EntityUtils.toByteArray(httpResponse.getEntity());
-				return ImageIO.read(new ByteArrayInputStream(bytes));
-            }
+			String contentType = httpResponse.getEntity().getContentType().getValue();
+			//application/json; charset=UTF-8
+			//image/jpeg
+			if (status == 200) {
+				if(contentType.contains("image/jpeg")) {
+					byte[] bytes = EntityUtils.toByteArray(httpResponse.getEntity());
+					WxaCodeResult result = new WxaCodeResult();
+					result.setBufferedImage(ImageIO.read(new ByteArrayInputStream(bytes)));
+					return result;
+				}else{
+					String body = EntityUtils.toString(httpResponse.getEntity());
+					return WxJsonUtil.parseObject(body, WxaCodeResult.class);
+				}
+			}
 		} catch (IOException e) {
 			logger.error("", e);
 		} finally {
@@ -371,8 +381,8 @@ public class WxaAPI extends BaseAPI {
 	 * @param getwxacodeunlimit getwxacodeunlimit
 	 * @return BufferedImage BufferedImage
 	 */
-	public static BufferedImage getwxacodeunlimit(String access_token,Getwxacodeunlimit getwxacodeunlimit){
-		String json = JsonUtil.toJSONString(getwxacodeunlimit);
+	public static WxaCodeResult getwxacodeunlimit(String access_token,Getwxacodeunlimit getwxacodeunlimit){
+		String json = WxJsonUtil.toJSONString(getwxacodeunlimit);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(jsonHeader)
 				.setUri(BASE_URI + "/wxa/getwxacodeunlimit")
@@ -382,43 +392,7 @@ public class WxaAPI extends BaseAPI {
 		CloseableHttpResponse httpResponse = LocalHttpClient.execute(httpUriRequest);
 		try {
 			int status = httpResponse.getStatusLine().getStatusCode();
-            if (status == 200) {
-				byte[] bytes = EntityUtils.toByteArray(httpResponse.getEntity());
-				return ImageIO.read(new ByteArrayInputStream(bytes));
-            }
-		} catch (IOException e) {
-			logger.error("", e);
-		} finally {
-			try {
-				httpResponse.close();
-			} catch (IOException e) {
-				logger.error("", e);
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * 获取小程序码 B<br>
-	 * 适用于需要的码数量极多，或仅临时使用的业务场景<br>
-	 * 注意：通过该接口生成的小程序码，永久有效，数量暂无限制。用户扫描该码进入小程序后，将统一打开首页，开发者需在首页根据获取的码中 scene 字段的值，再做处理逻辑。
-	 * @since 2.8.30
-	 * @param access_token access_token
-	 * @param getwxacodeunlimit getwxacodeunlimit
-	 * @return WxaCodeResult WxaCodeResult
-	 */
-	public static WxaCodeResult getwxacodeunlimitresult(String access_token,Getwxacodeunlimit getwxacodeunlimit){
-		String json = JsonUtil.toJSONString(getwxacodeunlimit);
-		HttpUriRequest httpUriRequest = RequestBuilder.post()
-				.setHeader(jsonHeader)
-				.setUri(BASE_URI + "/wxa/getwxacodeunlimit")
-				.addParameter(PARAM_ACCESS_TOKEN, API.accessToken(access_token))
-				.setEntity(new StringEntity(json,Charset.forName("utf-8")))
-				.build();
-		CloseableHttpResponse httpResponse = LocalHttpClient.execute(httpUriRequest);
-		try {
-			int status = httpResponse.getStatusLine().getStatusCode();
-			WxaCodeResult wxaCodeResult;
+			/*WxaCodeResult wxaCodeResult;
 			byte[] bytes = null;
 			if (status == 200) {
 				bytes = EntityUtils.toByteArray(httpResponse.getEntity());
@@ -433,6 +407,21 @@ public class WxaAPI extends BaseAPI {
 				String str = new String(bytes, StandardCharsets.UTF_8);
 				wxaCodeResult = JsonUtil.parseObject(str, WxaCodeResult.class);
 				return wxaCodeResult;
+			}*/
+			
+			String contentType = httpResponse.getEntity().getContentType().getValue();
+			//application/json; charset=UTF-8
+			//image/jpeg
+			if (status == 200) {
+				if(contentType.contains("image/jpeg")) {
+					byte[] bytes = EntityUtils.toByteArray(httpResponse.getEntity());
+					WxaCodeResult result = new WxaCodeResult();
+					result.setBufferedImage(ImageIO.read(new ByteArrayInputStream(bytes)));
+					return result;
+				}else{
+					String body = EntityUtils.toString(httpResponse.getEntity());
+					return WxJsonUtil.parseObject(body, WxaCodeResult.class);
+				}
 			}
 		} catch (IOException e) {
 			logger.error("", e);
@@ -445,7 +434,7 @@ public class WxaAPI extends BaseAPI {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * 附近 添加地点
 	 * @since 2.8.18
@@ -454,7 +443,7 @@ public class WxaAPI extends BaseAPI {
 	 * @return result
 	 */
 	public static AddnearbypoiResult addnearbypoi(String access_token, Addnearbypoi addnearbypoi){
-		String json = JsonUtil.toJSONString(addnearbypoi);
+		String json = WxJsonUtil.toJSONString(addnearbypoi);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 				.setHeader(jsonHeader)
 				.setUri(BASE_URI + "/wxa/addnearbypoi")

@@ -14,12 +14,12 @@ import weixin.popular.bean.user.Group;
 import weixin.popular.bean.user.TagsCreatResult;
 import weixin.popular.bean.user.TagsGetResult;
 import weixin.popular.bean.user.TagsGetidlistResult;
-import weixin.popular.bean.user.User;
+import weixin.popular.bean.user.UserInfo;
 import weixin.popular.bean.user.UserInfoList;
 import weixin.popular.bean.user.UserTagGetResult;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.EmojiUtil;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxEmojiUtil;
+import weixin.popular.util.WxJsonUtil;
 
 /**
  * User API
@@ -42,16 +42,16 @@ public class UserAPI extends BaseAPI{
 	 * 5 PureText 纯文本<br>
 	 * @return User
 	 */
-	public static User userInfo(String access_token,String openid,int emoji){
+	public static UserInfo userInfo(String access_token,String openid,int emoji){
 		HttpUriRequest httpUriRequest = RequestBuilder.get()
 				.setUri(BASE_URI+"/cgi-bin/user/info")
 				.addParameter(PARAM_ACCESS_TOKEN, API.accessToken(access_token))
 				.addParameter("openid",openid)
 				.addParameter("lang","zh_CN")
 				.build();
-		User user = LocalHttpClient.executeJsonResult(httpUriRequest,User.class);
+		UserInfo user = LocalHttpClient.executeJsonResult(httpUriRequest,UserInfo.class);
 		if(emoji != 0 && user != null && user.getNickname() != null){
-			user.setNickname_emoji(EmojiUtil.parse(user.getNickname(), emoji));
+			user.setNickname_emoji(WxEmojiUtil.parse(user.getNickname(), emoji));
 		}
 		return user;
 	}
@@ -62,7 +62,7 @@ public class UserAPI extends BaseAPI{
 	 * @param openid openid
 	 * @return User
 	 */
-	public static User userInfo(String access_token,String openid){
+	public static UserInfo userInfo(String access_token,String openid){
 		return userInfo(access_token, openid, 0);
 	}
 
@@ -114,9 +114,9 @@ public class UserAPI extends BaseAPI{
 				.build();
 		UserInfoList userInfoList = LocalHttpClient.executeJsonResult(httpUriRequest,UserInfoList.class);
 		if(emoji != 0 && userInfoList != null && userInfoList.getUser_info_list() != null){
-			for(User user : userInfoList.getUser_info_list()){
+			for(UserInfo user : userInfoList.getUser_info_list()){
 				if(user.getNickname() != null){
-					user.setNickname_emoji(EmojiUtil.parse(user.getNickname(), emoji));
+					user.setNickname_emoji(WxEmojiUtil.parse(user.getNickname(), emoji));
 				}
 			}
 		}
@@ -132,6 +132,9 @@ public class UserAPI extends BaseAPI{
 	 */
 	public static UserInfoList userInfoBatchget(String access_token,String lang,List<String> openids){
 		return userInfoBatchget(access_token, lang, openids,0);
+	}
+	public static UserInfoList userInfoBatchget(String access_token, List<String> openids){
+		return userInfoBatchget(access_token, "zh-CN", openids,0);
 	}
 
 	/**
@@ -244,7 +247,7 @@ public class UserAPI extends BaseAPI{
 	 * @return BaseResult
 	 */
 	public static BaseResult groupsMembersBatchUpdate(String access_token,List<String> openid_list,String to_groupid){
-		String openidListStr = JsonUtil.toJSONString(openid_list);
+		String openidListStr = WxJsonUtil.toJSONString(openid_list);
 		String groupJson = "{\"openid_list\":"+openidListStr+",\"to_groupid\":"+to_groupid+"}";
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 										.setHeader(jsonHeader)
@@ -373,7 +376,7 @@ public class UserAPI extends BaseAPI{
 	 * @return result
 	 */
 	public static BaseResult tagsMembersBatchtagging(String access_token,Integer tagid,String[] openids){
-		String json = String.format("{\"tagid\":%d,\"openid_list\":%s}",tagid,JsonUtil.toJSONString(openids));
+		String json = String.format("{\"tagid\":%d,\"openid_list\":%s}",tagid,WxJsonUtil.toJSONString(openids));
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 										.setHeader(jsonHeader)
 										.setUri(BASE_URI+"/cgi-bin/tags/members/batchtagging")
@@ -392,7 +395,7 @@ public class UserAPI extends BaseAPI{
 	 * @return result
 	 */
 	public static BaseResult tagsMembersBatchuntagging(String access_token,Integer tagid,String[] openids){
-		String json = String.format("{\"tagid\":%d,\"openid_list\":%s}",tagid,JsonUtil.toJSONString(openids));
+		String json = String.format("{\"tagid\":%d,\"openid_list\":%s}",tagid,WxJsonUtil.toJSONString(openids));
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 										.setHeader(jsonHeader)
 										.setUri(BASE_URI+"/cgi-bin/tags/members/batchuntagging")
@@ -447,7 +450,7 @@ public class UserAPI extends BaseAPI{
 	 * @return result
 	 */
 	public static BaseResult tagsMembersBatchblacklist(String access_token,String[] openid_list){
-		String json = String.format("{\"openid_list\":%s}",JsonUtil.toJSONString(openid_list));
+		String json = String.format("{\"openid_list\":%s}",WxJsonUtil.toJSONString(openid_list));
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 										.setHeader(jsonHeader)
 										.setUri(BASE_URI+"/cgi-bin/tags/members/batchblacklist")
@@ -465,7 +468,7 @@ public class UserAPI extends BaseAPI{
 	 * @return result
 	 */
 	public static BaseResult tagsMembersBatchunblacklist(String access_token,String[] openid_list){
-		String json = String.format("{\"openid_list\":%s}",JsonUtil.toJSONString(openid_list));
+		String json = String.format("{\"openid_list\":%s}",WxJsonUtil.toJSONString(openid_list));
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 										.setHeader(jsonHeader)
 										.setUri(BASE_URI+"/cgi-bin/tags/members/batchunblacklist")

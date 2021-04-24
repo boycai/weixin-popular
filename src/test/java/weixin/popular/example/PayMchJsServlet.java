@@ -40,7 +40,7 @@ public class PayMchJsServlet extends HttpServlet{
 
 		unifiedorder.setBody("商品信息");
 		unifiedorder.setOut_trade_no("123456");
-		unifiedorder.setTotal_fee("1");//单位分
+		unifiedorder.setTotal_fee(1);//单位分
 		unifiedorder.setSpbill_create_ip(request.getRemoteAddr());//IP
 		unifiedorder.setNotify_url("http://mydomain.com/test/notify");
 		unifiedorder.setTrade_type("JSAPI");//JSAPI，NATIVE，APP，MWEB

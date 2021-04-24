@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import weixin.popular.bean.qrcode.QrcodeTicket;
 import weixin.popular.bean.qrcode.Wxaqrcode;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 
 /**
  * 二维码API
@@ -115,7 +115,7 @@ public class QrcodeAPI extends BaseAPI{
 	 * @return BufferedImage
 	 */
 	public static BufferedImage wxaappCreatewxaqrcode(String access_token,Wxaqrcode wxaqrcode){
-		String json = JsonUtil.toJSONString(wxaqrcode);
+		String json = WxJsonUtil.toJSONString(wxaqrcode);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 								.setHeader(jsonHeader)
 								.setUri(BASE_URI + "/cgi-bin/wxaapp/createwxaqrcode")

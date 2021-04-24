@@ -19,10 +19,10 @@ public class EventMessage {
 
 	//base
 	@XmlElement(name="ToUserName")
-	private String toUserName; 		//开发者微信号
+	private String toUserName; 		//开发者微信号、企业cropId（企业应用消息）
 	
 	@XmlElement(name="FromUserName")
-	private String fromUserName;	//发送方帐号（一个OpenID）
+	private String fromUserName;	//发送方帐号（一个OpenID）、企业UserID（企业应用消息）
 	
 	@XmlElement(name="CreateTime")
 	private Integer createTime;		//消息创建时间 （整型）
@@ -256,6 +256,11 @@ public class EventMessage {
 	
 	//扫一扫事件推送-------------------------------- END
 	
+	
+	//企业应用消息-------------------------------- START
+	@XmlElement(name="AgentID")
+	private Integer agentId;		//企业应用ID
+	//企业应用消息-------------------------------- END
 	
 	/**
 	 * 其它未定义XML字段 
@@ -738,6 +743,14 @@ public class EventMessage {
 
 	public void setCopyrightCheckResult(CopyrightCheckResult copyrightCheckResult) {
 		this.copyrightCheckResult = copyrightCheckResult;
+	}
+
+	public Integer getAgentId() {
+		return agentId;
+	}
+
+	public void setAgentId(Integer agentId) {
+		this.agentId = agentId;
 	}
 	
 }

@@ -33,7 +33,7 @@ import weixin.popular.bean.message.Article;
 import weixin.popular.bean.message.Uploadvideo;
 import weixin.popular.client.BytesOrJsonResponseHandler;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 import weixin.popular.util.StreamUtils;
 
 /**
@@ -270,7 +270,7 @@ public class MediaAPI extends BaseAPI{
 	 * @return Media
 	 */
 	public static Media mediaUploadnews(String access_token,List<Article> articles){
-		String str = JsonUtil.toJSONString(articles);
+		String str = WxJsonUtil.toJSONString(articles);
 		String messageJson = "{\"articles\":"+str+"}";
 		return mediaUploadnews(access_token, messageJson);
 	}
@@ -298,7 +298,7 @@ public class MediaAPI extends BaseAPI{
 	 * @return Media
 	 */
 	public static Media mediaUploadvideo(String access_token,Uploadvideo uploadvideo){
-		String messageJson = JsonUtil.toJSONString(uploadvideo);
+		String messageJson = WxJsonUtil.toJSONString(uploadvideo);
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 										.setHeader(jsonHeader)
 										//2.8.20 修改URI  原URI MEDIA_URI+"/cgi-bin/media/uploadvideo"

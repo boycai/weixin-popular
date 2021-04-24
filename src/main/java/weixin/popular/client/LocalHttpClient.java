@@ -90,7 +90,7 @@ public class LocalHttpClient {
 		try {
 			initMchKeyStore(mch_id, new FileInputStream(new File(keyStoreFilePath)));
 		} catch (FileNotFoundException e) {
-			logger.error("init error", e);
+			logger.error("init mchKeyStore error, mchId: " + mch_id, e);
 		}
 	}
 	
@@ -108,8 +108,12 @@ public class LocalHttpClient {
 			 CloseableHttpClient httpClient = HttpClientFactory.createKeyMaterialHttpClient(keyStore, mch_id,timeout,retryExecutionCount);
 			 httpClient_mchKeyStore.put(mch_id, httpClient);
 		} catch (Exception e) {
-			logger.error("init mch error", e);
+			logger.error("init mchKeyStore error, mchId: " + mch_id, e);
 		}
+	}
+	
+	public static boolean hasMchKeyStore(String mchId) {
+		return httpClient_mchKeyStore.containsKey(mchId);
 	}
 
 
@@ -234,7 +238,8 @@ public class LocalHttpClient {
 	 */
 	private static String loggerRequest(HttpUriRequest request){
 		String id = UUID.randomUUID().toString();
-		if(logger.isInfoEnabled()||logger.isDebugEnabled()){
+		//if(logger.isInfoEnabled()||logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			if(request instanceof HttpEntityEnclosingRequestBase){
 				HttpEntityEnclosingRequestBase request_base = (HttpEntityEnclosingRequestBase)request;
 				HttpEntity entity = request_base.getEntity();
@@ -247,14 +252,14 @@ public class LocalHttpClient {
 						logger.error("logger content data get error", e);
 					}
 				}
-				logger.info("URI[{}] {} {} ContentLength:{} Content:{}",
+				logger.debug("URI[{}] {} {} ContentLength:{} Content:{}",
 			    id,
 				request.getURI().toString(),
 				entity.getContentType(),
 				entity.getContentLength(),
 				content == null?"multipart_form_data":content);
 			}else{
-				logger.info("URI[{}] {}",id,request.getURI().toString());
+				logger.debug("URI[{}] {}",id,request.getURI().toString());
 			}
 		}
 		return id;

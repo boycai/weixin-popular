@@ -34,7 +34,7 @@ import weixin.popular.bean.media.MediaType;
 import weixin.popular.bean.message.Article;
 import weixin.popular.client.BytesOrJsonResponseHandler;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 import weixin.popular.util.StreamUtils;
 
 /**
@@ -53,7 +53,7 @@ public class MaterialAPI extends BaseAPI{
 	 * @return Media
 	 */
 	public static Media add_news(String access_token,List<Article> articles){
-		String str = JsonUtil.toJSONString(articles);
+		String str = WxJsonUtil.toJSONString(articles);
 		String messageJson = "{\"articles\":"+str+"}";
 		HttpUriRequest httpUriRequest = RequestBuilder.post()
 										.setHeader(jsonHeader)
@@ -83,7 +83,7 @@ public class MaterialAPI extends BaseAPI{
 		MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create()
         		 			.addPart("media", bin);
         if(description != null){
-        	multipartEntityBuilder.addTextBody("description", JsonUtil.toJSONString(description),ContentType.create("text/plain",Charset.forName("utf-8")));
+        	multipartEntityBuilder.addTextBody("description", WxJsonUtil.toJSONString(description),ContentType.create("text/plain",Charset.forName("utf-8")));
         }
         HttpEntity reqEntity = multipartEntityBuilder.addTextBody(PARAM_ACCESS_TOKEN, API.accessToken(access_token))
 			                 .addTextBody("type",mediaType.uploadType())
@@ -115,7 +115,7 @@ public class MaterialAPI extends BaseAPI{
         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create()
         		.addBinaryBody("media",data,ContentType.DEFAULT_BINARY,"temp."+mediaType.fileSuffix());
 		if(description != null){
-			multipartEntityBuilder.addTextBody("description", JsonUtil.toJSONString(description),ContentType.create("text/plain",Charset.forName("utf-8")));
+			multipartEntityBuilder.addTextBody("description", WxJsonUtil.toJSONString(description),ContentType.create("text/plain",Charset.forName("utf-8")));
 		}
 		HttpEntity reqEntity = multipartEntityBuilder.addTextBody(PARAM_ACCESS_TOKEN, API.accessToken(access_token))
 		                 .addTextBody("type",mediaType.uploadType())
@@ -145,7 +145,7 @@ public class MaterialAPI extends BaseAPI{
 			 MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create()
 					 .addBinaryBody("media",EntityUtils.toByteArray(entity),ContentType.get(entity),"temp."+mediaType.fileSuffix());
 			 if(description != null){
-				multipartEntityBuilder.addTextBody("description", JsonUtil.toJSONString(description),ContentType.create("text/plain",Charset.forName("utf-8")));
+				multipartEntityBuilder.addTextBody("description", WxJsonUtil.toJSONString(description),ContentType.create("text/plain",Charset.forName("utf-8")));
 			 }
 			 HttpEntity reqEntity = multipartEntityBuilder.addTextBody(PARAM_ACCESS_TOKEN, API.accessToken(access_token))
 			         .addTextBody("type",mediaType.uploadType())
@@ -212,7 +212,7 @@ public class MaterialAPI extends BaseAPI{
 	 * @return BaseResult
 	 */
 	public static BaseResult update_news(String access_token,String media_id,int index,List<Article> articles){
-		return update_news(access_token, media_id, index, JsonUtil.toJSONString(articles));
+		return update_news(access_token, media_id, index, WxJsonUtil.toJSONString(articles));
 	}
 	
 		

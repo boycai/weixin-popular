@@ -8,7 +8,7 @@ import weixin.popular.bean.scan.base.ProductGet;
 import weixin.popular.bean.scan.crud.*;
 import weixin.popular.bean.scan.result.*;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 
 import java.nio.charset.Charset;
 
@@ -44,7 +44,7 @@ public class ScanAPI extends BaseAPI {
      * @return ProductCreateResult
      */
     public static ProductCreateResult productCreate(String accessToken, ProductCreate productCreate) {
-        return productCreate(accessToken, JsonUtil.toJSONString(productCreate));
+        return productCreate(accessToken, WxJsonUtil.toJSONString(productCreate));
     }
 
     /**
@@ -73,7 +73,7 @@ public class ScanAPI extends BaseAPI {
      * @return BaseResult
      */
     public static BaseResult productModstatus(String accessToken, ProductStatus productStatus) {
-        return productModstatus(accessToken, JsonUtil.toJSONString(productStatus));
+        return productModstatus(accessToken, WxJsonUtil.toJSONString(productStatus));
     }
 
     /**
@@ -102,7 +102,7 @@ public class ScanAPI extends BaseAPI {
      * @return BaseResult
      */
     public static BaseResult testwhitelistSet(String accessToken, WhiteUsers whiteUsers) {
-        return testwhitelistSet(accessToken, JsonUtil.toJSONString(whiteUsers));
+        return testwhitelistSet(accessToken, WxJsonUtil.toJSONString(whiteUsers));
     }
 
     /**
@@ -131,7 +131,7 @@ public class ScanAPI extends BaseAPI {
      * @return ProductGetqrcodeResult
      */
     public static ProductGetqrcodeResult productGetqrcode(String accessToken, ProductGetqrcode productGetqrcode) {
-        return productGetqrcode(accessToken, JsonUtil.toJSONString(productGetqrcode));
+        return productGetqrcode(accessToken, WxJsonUtil.toJSONString(productGetqrcode));
     }
 
     /**
@@ -160,7 +160,7 @@ public class ScanAPI extends BaseAPI {
      * @return ProductGetResult
      */
     public static ProductGetResult productGet(String accessToken, ProductGet productGet) {
-        return productGet(accessToken, JsonUtil.toJSONString(productGet));
+        return productGet(accessToken, WxJsonUtil.toJSONString(productGet));
     }
 
     /**
@@ -189,7 +189,7 @@ public class ScanAPI extends BaseAPI {
      * @return ProductGetlistResult
      */
     public static ProductGetlistResult productGetlist(String accessToken, ProductGetlist productGetlist) {
-        return productGetlist(accessToken, JsonUtil.toJSONString(productGetlist));
+        return productGetlist(accessToken, WxJsonUtil.toJSONString(productGetlist));
     }
 
     /**
@@ -218,7 +218,7 @@ public class ScanAPI extends BaseAPI {
      * @return ProductCreateResult
      */
     public static ProductCreateResult productUpdate(String accessToken, ProductUpdate productUpdate) {
-        return productUpdate(accessToken, JsonUtil.toJSONString(productUpdate));
+        return productUpdate(accessToken, WxJsonUtil.toJSONString(productUpdate));
     }
 
     /**
@@ -247,7 +247,7 @@ public class ScanAPI extends BaseAPI {
      * @return BaseResult
      */
     public static BaseResult productClear(String accessToken, ProductGet productGet) {
-        return productClear(accessToken, JsonUtil.toJSONString(productGet));
+        return productClear(accessToken, WxJsonUtil.toJSONString(productGet));
     }
 
     /**
@@ -294,7 +294,7 @@ public class ScanAPI extends BaseAPI {
      * @return BaseResult
      */
     public static BaseResult clearTicketCheck(String accessToken, TicketCheck ticketCheck) {
-        return clearTicketCheck(accessToken, JsonUtil.toJSONString(ticketCheck));
+        return clearTicketCheck(accessToken, WxJsonUtil.toJSONString(ticketCheck));
     }
 
     /**

@@ -6,29 +6,17 @@ package weixin.popular.bean.message;
  *
  */
 public class Article {
-
 	private String title;
-
 	private String thumb_media_id;//图文消息的封面图片素材id
-
-	private String show_cover_pic;//是否显示封面，0为false，即不显示，1为true，即显示
-	
+	private Integer show_cover_pic;//是否显示封面，0为false，即不显示，1为true，即显示
 	private String thumb_url;	//封面图片地址
-
 	private String author;
-
 	private String digest;//图文消息的摘要，仅有单图文消息才有摘要，多图文此处为空
-
 	private String content;//图文消息的具体内容，支持HTML标签，必须少于2万字符，小于1M，且此处会去除JS
-	
 	private String url;	//图文页的URL(高级群发不可用外链)
-	
 	private String content_source_url; 	//图文消息的原文地址，即点击“阅读原文”后的URL
-	
 	private Integer need_open_comment;	//是否打开评论，0不打开，1打开
-	
 	private Integer only_fans_can_comment;	//是否粉丝才可评论，0所有人可评论，1粉丝才可评论
-
 	
 	public String getTitle() {
 		return title;
@@ -46,11 +34,11 @@ public class Article {
 		this.thumb_media_id = thumb_media_id;
 	}
 
-	public String getShow_cover_pic() {
+	public Integer getShow_cover_pic() {
 		return show_cover_pic;
 	}
 
-	public void setShow_cover_pic(String show_cover_pic) {
+	public void setShow_cover_pic(Integer show_cover_pic) {
 		this.show_cover_pic = show_cover_pic;
 	}
 

@@ -4,14 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
+import redis.clients.util.Pool;
 import weixin.popular.support.ExpireKey;
 
 public class JedisExpireKey implements ExpireKey {
 	
 	private static Logger logger = LoggerFactory.getLogger(JedisExpireKey.class);
 
-	private JedisPool pool;
+	private Pool<Jedis> pool;
 
 	private static final String DEFAULT_VALUE = "";
 
@@ -20,7 +20,7 @@ public class JedisExpireKey implements ExpireKey {
 	public JedisExpireKey() {
 	}
 
-	public JedisExpireKey(JedisPool pool) {
+	public JedisExpireKey(Pool<Jedis> pool) {
 		this.pool = pool;
 	}
 
@@ -28,7 +28,7 @@ public class JedisExpireKey implements ExpireKey {
 		this.perfix = perfix;
 	}
 
-	public void setPool(JedisPool pool) {
+	public void setPool(Pool<Jedis> pool) {
 		this.pool = pool;
 	}
 

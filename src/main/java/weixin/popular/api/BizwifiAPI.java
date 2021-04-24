@@ -30,7 +30,7 @@ import weixin.popular.bean.bizwifi.shop.update.ShopUpdate;
 import weixin.popular.bean.bizwifi.statistics.StatisticsList;
 import weixin.popular.bean.bizwifi.statistics.StatisticsListResult;
 import weixin.popular.client.LocalHttpClient;
-import weixin.popular.util.JsonUtil;
+import weixin.popular.util.WxJsonUtil;
 
 /**
  * 微信连Wi-Fi
@@ -48,7 +48,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return OpenpluginTokenResult
      */
     public static OpenPluginTokenResult openpluginToken(String accessToken, OpenPluginToken openPluginToken) {
-        return openpluginToken(accessToken, JsonUtil.toJSONString(openPluginToken));
+        return openpluginToken(accessToken, WxJsonUtil.toJSONString(openPluginToken));
     }
 
     /**
@@ -97,7 +97,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return BaseResult
      */
     public static BaseResult finishpageSet(String accessToken, FinishPageSet finishPageSet) {
-        return finishpageSet(accessToken, JsonUtil.toJSONString(finishPageSet));
+        return finishpageSet(accessToken, WxJsonUtil.toJSONString(finishPageSet));
     }
 
     /**
@@ -109,7 +109,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return BaseResult
      */
     public static BaseResult businessfinishPageSet(String accessToken, FinishPageSet finishPageSet) {
-        return finishpageSet(accessToken, JsonUtil.toJSONString(finishPageSet));
+        return finishpageSet(accessToken, WxJsonUtil.toJSONString(finishPageSet));
     }
 
     /**
@@ -143,7 +143,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return BaseResult
      */
     public static BaseResult homepageSet(String accessToken, HomePageSet homePageSet) {
-        return homepageSet(accessToken, JsonUtil.toJSONString(homePageSet));
+        return homepageSet(accessToken, WxJsonUtil.toJSONString(homePageSet));
     }
 
     /**
@@ -155,7 +155,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return BaseResult
      */
     public static BaseResult businesshomePageSet(String accessToken, HomePageSet homePageSet) {
-        return homepageSet(accessToken, JsonUtil.toJSONString(homePageSet));
+        return homepageSet(accessToken, WxJsonUtil.toJSONString(homePageSet));
     }
 
     /**
@@ -186,7 +186,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return BaseResult
      */
     public static ShopGetResult shopGet(String accessToken, ShopInfo shopInfo) {
-        return shopGet(accessToken, JsonUtil.toJSONString(shopInfo));
+        return shopGet(accessToken, WxJsonUtil.toJSONString(shopInfo));
     }
 
     /**
@@ -219,7 +219,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return ShopListResult
      */
     public static ShopListResult shopList(String accessToken, ShopList shopList) {
-        return shopList(accessToken, JsonUtil.toJSONString(shopList));
+        return shopList(accessToken, WxJsonUtil.toJSONString(shopList));
     }
 
     /**
@@ -252,7 +252,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return BaseResult
      */
     public static BaseResult shopUpdate(String accessToken, ShopUpdate shopUpdate) {
-        return shopUpdate(accessToken, JsonUtil.toJSONString(shopUpdate));
+        return shopUpdate(accessToken, WxJsonUtil.toJSONString(shopUpdate));
     }
 
     /**
@@ -283,7 +283,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return BaseResult
      */
     public static BaseResult shopClean(String accessToken, ShopInfo shopInfo) {
-        return shopClean(accessToken, JsonUtil.toJSONString(shopInfo));
+        return shopClean(accessToken, WxJsonUtil.toJSONString(shopInfo));
     }
 
     /**
@@ -314,7 +314,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return BaseResult
      */
     public static BaseResult deviceAdd(String accessToken, ShopInfo shopInfo) {
-        return deviceAdd(accessToken, JsonUtil.toJSONString(shopInfo));
+        return deviceAdd(accessToken, WxJsonUtil.toJSONString(shopInfo));
     }
 
     /**
@@ -345,7 +345,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return ApportalRegisterResult
      */
     public static ApportalRegisterResult apportalRegister(String accessToken, ApportalRegister apportalRegister) {
-        return apportalRegister(accessToken, JsonUtil.toJSONString(apportalRegister));
+        return apportalRegister(accessToken, WxJsonUtil.toJSONString(apportalRegister));
     }
 
     /**
@@ -377,7 +377,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return DeviceListResult
      */
     public static DeviceListResult deviceList(String accessToken, DeviceList deviceList) {
-        return deviceList(accessToken, JsonUtil.toJSONString(deviceList));
+        return deviceList(accessToken, WxJsonUtil.toJSONString(deviceList));
     }
 
     /**
@@ -409,7 +409,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return BaseResult
      */
     public static BaseResult deviceDelete(String accessToken, DeviceDelete deviceDelete) {
-        return deviceDelete(accessToken, JsonUtil.toJSONString(deviceDelete));
+        return deviceDelete(accessToken, WxJsonUtil.toJSONString(deviceDelete));
     }
 
     /**
@@ -442,7 +442,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return QrcodeGetResult
      */
     public static QrcodeGetResult qrcodeGet(String accessToken, QrcodeGet qrcodeGet) {
-        return qrcodeGet(accessToken, JsonUtil.toJSONString(qrcodeGet));
+        return qrcodeGet(accessToken, WxJsonUtil.toJSONString(qrcodeGet));
     }
 
     /**
@@ -475,7 +475,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return HomePageGetResult
      */
     public static HomePageGetResult homepageGet(String accessToken, ShopInfo shopInfo) {
-        return homepageGet(accessToken, JsonUtil.toJSONString(shopInfo));
+        return homepageGet(accessToken, WxJsonUtil.toJSONString(shopInfo));
     }
 
     /**
@@ -507,7 +507,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return BaseResult
      */
     public static BaseResult barSet(String accessToken, BarSet barSet) {
-        return barSet(accessToken, JsonUtil.toJSONString(barSet));
+        return barSet(accessToken, WxJsonUtil.toJSONString(barSet));
     }
 
     /**
@@ -540,7 +540,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return BaseResult
      */
     public static BaseResult couponputSet(String accessToken, CouponputSet couponputSet) {
-        return couponputSet(accessToken, JsonUtil.toJSONString(couponputSet));
+        return couponputSet(accessToken, WxJsonUtil.toJSONString(couponputSet));
     }
 
     /**
@@ -573,7 +573,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return CouponputGetResult
      */
     public static CouponputGetResult couponputGet(String accessToken, ShopInfo shopInfo) {
-        return couponputGet(accessToken, JsonUtil.toJSONString(shopInfo));
+        return couponputGet(accessToken, WxJsonUtil.toJSONString(shopInfo));
     }
 
     /**
@@ -607,7 +607,7 @@ public class BizwifiAPI extends BaseAPI {
      * @return StatisticsListResult
      */
     public static StatisticsListResult statisticsList(String accessToken, StatisticsList statisticsList) {
-        return statisticsList(accessToken, JsonUtil.toJSONString(statisticsList));
+        return statisticsList(accessToken, WxJsonUtil.toJSONString(statisticsList));
     }
 
     /**

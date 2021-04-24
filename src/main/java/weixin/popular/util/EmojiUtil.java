@@ -12,7 +12,10 @@ public abstract class EmojiUtil {
 	 * @return emoji_result
 	 */
 	public static String parseToHtmlHexadecimal(String emoji_str){
-		return EmojiParser.parseToHtmlHexadecimal(emoji_str);
+		if(emoji_str != null) {
+			return EmojiParser.parseToHtmlHexadecimal(emoji_str);
+		}
+		return null;
 	}
 	
 	/**
@@ -38,7 +41,10 @@ public abstract class EmojiUtil {
 	 * @return emoji_result
 	 */
 	public static String parseToAliases(String emoji_str){
-		return EmojiParser.parseToAliases(emoji_str);
+		if(emoji_str != null) {
+			return EmojiParser.parseToAliases(emoji_str);
+		}
+		return null;
 	}
 	
 	/**
@@ -47,7 +53,10 @@ public abstract class EmojiUtil {
 	 * @return emoji_result
 	 */
 	public static String parseToHtmlDecimal(String emoji_str){
-		return EmojiParser.parseToHtmlDecimal(emoji_str);
+		if(emoji_str != null) {
+			return EmojiParser.parseToHtmlDecimal(emoji_str);
+		}
+		return null;
 	}
 	
 	/**
@@ -56,7 +65,10 @@ public abstract class EmojiUtil {
 	 * @return emoji_result
 	 */
 	public static String removeAllEmojis(String emoji_str){
-		return EmojiParser.removeAllEmojis(emoji_str);
+		if(emoji_str != null) {
+			return EmojiParser.removeAllEmojis(emoji_str);
+		}
+		return null;
 	}
 	
 	/**
@@ -92,6 +104,31 @@ public abstract class EmojiUtil {
 		default:
 			return null;
 		}
+	}
+	
+	/**
+	 * 还原为emoji
+	 * @param input
+	 * @return
+	 */
+	public static String parseToUnicode(String input){
+		if(input != null) {
+			return EmojiParser.parseToUnicode(input);
+		}
+		return null;
+	}
+	
+	public static void test() {
+		String fourLeafClover = "🍀";
+		System.out.println("parseToHtmlHexadecimal	1🍀：" + parse(fourLeafClover, 1));
+		System.out.println("parseToHtmlTag          2🍀：" + parse(fourLeafClover, 2));
+		System.out.println("parseToAliases          3🍀：" + parse(fourLeafClover, 3));
+		System.out.println("parseToHtmlDecimal      4🍀：" + parse(fourLeafClover, 4));
+		System.out.println("removeAllEmojis         5🍀：" + parse(fourLeafClover, 5));
+	}
+	
+	public static void main(String[] args) {
+		test();
 	}
 	
 }

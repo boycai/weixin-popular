@@ -1,5 +1,7 @@
 package weixin.popular.bean;
 
+import weixin.popular.util.WxJsonUtil;
+
 /**
  * 微信请求状态数据
  *
@@ -7,37 +9,46 @@ package weixin.popular.bean;
  */
 public class BaseResult {
 
-  private static final String SUCCESS_CODE = "0";
+	private static final String SUCCESS_CODE = "0";
 
-  private String errcode;
-  private String errmsg;
+	private String errcode;
+	private String errmsg;
 
-  public BaseResult() {
-  }
+	public BaseResult() {
+	}
 
-  public BaseResult(String errcode, String errmsg) {
-    this.errcode = errcode;
-    this.errmsg = errmsg;
-  }
+	public BaseResult(String errcode, String errmsg) {
+		this.errcode = errcode;
+		this.errmsg = errmsg;
+	}
 
-  public String getErrcode() {
-    return errcode;
-  }
+	public String getErrcode() {
+		return errcode;
+	}
 
-  public void setErrcode(String errcode) {
-    this.errcode = errcode;
-  }
+	public void setErrcode(String errcode) {
+		this.errcode = errcode;
+	}
 
-  public String getErrmsg() {
-    return errmsg;
-  }
+	public String getErrmsg() {
+		return errmsg;
+	}
 
-  public void setErrmsg(String errmsg) {
-    this.errmsg = errmsg;
-  }
+	public void setErrmsg(String errmsg) {
+		this.errmsg = errmsg;
+	}
 
-  public boolean isSuccess() {
-    return errcode == null || errcode.isEmpty() || errcode.equals(SUCCESS_CODE);
-  }
+	public boolean isSuccess() {
+		return errcode == null || errcode.isEmpty() || errcode.equals(SUCCESS_CODE);
+	}
+
+	@Override
+	public String toString() {
+		return WxJsonUtil.toJSONString(this);
+	}
+	
+	public String toErrorStr() {
+		return "WxError: [errcode=" + errcode + ", errmsg=" + errmsg + "]";
+	}
 
 }
